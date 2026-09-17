@@ -88,8 +88,7 @@ export const Footer = () => {
             <h4>Coaching Programs</h4>
             <ul className="footer-links">
               <li><Link to="/courses">Courses</Link></li>
-              <li><Link to="/courses">Subjects</Link></li>
-              <li><Link to="/courses">Assessments</Link></li>
+              <li><Link to="/subjects">Subjects</Link></li>
               <li><Link to="/announcements">Announcements</Link></li>
               <li><Link to="/about">About Cognova</Link></li>
             </ul>

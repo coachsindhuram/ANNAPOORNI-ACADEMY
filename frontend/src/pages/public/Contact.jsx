@@ -70,57 +70,58 @@ export const Contact = () => {
   return (
     <div>
       {/* Contact Header Section */}
-      <section className="page-header">
-        <div className="container">
-          <h1>Contact Coach Sindhu Ram</h1>
-          <p style={{ maxWidth: '650px', margin: '1rem auto 0', color: 'var(--gray-300)', fontSize: '1.1rem' }}>
+      <section style={{ 
+        position: 'relative', 
+        overflow: 'hidden', 
+        background: 'var(--color-primary-dark)', 
+        color: 'white',
+        padding: 'var(--space-20) 0 var(--space-16)'
+      }}>
+        <div className="container" style={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+          <h1 style={{ color: 'white', marginBottom: 'var(--space-4)', fontSize: 'var(--text-4xl)' }}>
+            Contact Coach Sindhu Ram
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--text-lg)', maxWidth: '800px', margin: '0 auto' }}>
             Have questions about Vedic Maths, Memory Coaching, or Speed Reading? Connect directly with Coach Sindhu Ram.
           </p>
         </div>
       </section>
 
-      <section className="container" style={{ padding: '4rem 1.5rem' }}>
+      <section className="container" style={{ padding: 'var(--space-20) 1.5rem' }}>
         <div className="responsive-grid-1-1">
           {/* Contact Details Column */}
           <div>
-            <h2 style={{ fontSize: '1.75rem', marginBottom: '1.5rem' }}>Get in Touch</h2>
+            <h2 style={{ fontSize: 'var(--text-3xl)', marginBottom: 'var(--space-8)', color: 'var(--color-text)' }}>
+              Get in Touch
+            </h2>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', marginBottom: 'var(--space-10)' }}>
               {/* Interactive Academy Campus Address Block */}
               <AcademyLocationCard variant="compact" />
 
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(30, 58, 138, 0.08)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Mail size={22} />
+              <div className="card" style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--color-primary-50)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Mail size={24} />
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Email Inquiries</h4>
-                  <a href={`mailto:${displayEmail}`} style={{ color: 'var(--primary-color)', fontWeight: 600, fontSize: '0.95rem', display: 'inline-block', marginTop: '0.2rem' }}>
+                  <h4 style={{ fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>Email Inquiries</h4>
+                  <a href={`mailto:${displayEmail}`} style={{ color: 'var(--color-primary)', fontWeight: 600, display: 'inline-block', marginTop: '0.25rem' }}>
                     {displayEmail}
                   </a>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(30, 58, 138, 0.08)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Phone size={22} />
+              <div className="card" style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--color-primary-50)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Phone size={24} />
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Phone / WhatsApp</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.2rem' }}>
-                    <a
-                      href={`tel:${displayPhone.replace(/\s+/g, '')}`}
-                      style={{ color: 'var(--text-color)', fontWeight: 600, fontSize: '0.95rem' }}
-                    >
+                  <h4 style={{ fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>Phone / WhatsApp</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <a href={`tel:${displayPhone.replace(/\s+/g, '')}`} style={{ color: 'var(--color-text)', fontWeight: 500 }}>
                       📞 {displayPhone}
                     </a>
-                    <a
-                      href={`https://wa.me/${whatsappNum}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: '#25D366', fontWeight: 700, fontSize: '0.95rem' }}
-                      title="Click to chat on WhatsApp"
-                    >
+                    <a href={`https://wa.me/${whatsappNum}`} target="_blank" rel="noopener noreferrer" style={{ color: '#16A34A', fontWeight: 700 }}>
                       💬 Chat Directly on WhatsApp
                     </a>
                   </div>
@@ -128,13 +129,13 @@ export const Contact = () => {
               </div>
 
               {contactInfo.working_hours && (
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(30, 58, 138, 0.08)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <Clock size={22} />
+                <div className="card" style={{ padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--color-primary-50)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Clock size={24} />
                   </div>
                   <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Working Hours</h4>
-                    <p style={{ color: 'var(--gray-600)', fontSize: '0.95rem', marginTop: '0.2rem' }}>{contactInfo.working_hours}</p>
+                    <h4 style={{ fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--color-text)' }}>Working Hours</h4>
+                    <p style={{ color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>{contactInfo.working_hours}</p>
                   </div>
                 </div>
               )}
@@ -142,17 +143,11 @@ export const Contact = () => {
 
             {/* Official Social Links */}
             {contactSocials.length > 0 && (
-              <div style={{ marginBottom: '2rem' }}>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Connect on Official Channels</h4>
+              <div style={{ marginBottom: 'var(--space-8)' }}>
+                <h4 style={{ fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--color-text)', marginBottom: '1rem' }}>Connect on Official Channels</h4>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   {contactSocials.map(soc => (
-                    <a
-                      key={soc.id}
-                      href={soc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-outline btn-sm"
-                    >
+                    <a key={soc.id} href={soc.url} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm" style={{ borderRadius: '50px' }}>
                       {soc.platform}
                     </a>
                   ))}
@@ -165,23 +160,23 @@ export const Contact = () => {
           </div>
 
           {/* Contact Form Box */}
-          <div className="glass-card" style={{ padding: '2.5rem' }}>
+          <div className="card" style={{ padding: 'var(--space-10)', display: 'flex', flexDirection: 'column' }}>
             {submitted ? (
-              <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-                <CheckCircle2 size={56} style={{ color: 'var(--success-color)', margin: '0 auto 1rem' }} />
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Inquiry Received!</h3>
-                <p style={{ color: 'var(--gray-600)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
-                  Thank you <strong>{formData.name}</strong>! Your inquiry has been safely recorded in our system. A confirmation copy has been sent to your email (<strong>{formData.email}</strong>), and our team will get back to you shortly.
+              <div style={{ textAlign: 'center', padding: 'var(--space-8) 0' }}>
+                <CheckCircle2 size={64} style={{ color: 'var(--color-success)', margin: '0 auto var(--space-6)' }} />
+                <h3 style={{ fontSize: 'var(--text-2xl)', marginBottom: '1rem' }}>Inquiry Received!</h3>
+                <p style={{ color: 'var(--color-text-muted)', marginBottom: 'var(--space-8)', lineHeight: 1.6 }}>
+                  Thank you <strong style={{ color: 'var(--color-text)' }}>{formData.name}</strong>! Your inquiry has been safely recorded in our system. A confirmation copy has been sent to your email (<strong style={{ color: 'var(--color-text)' }}>{formData.email}</strong>), and our team will get back to you shortly.
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <a
                     href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(`Hi Coach Sindhu Ram, I just submitted an inquiry on the website regarding ${formData.subject}. My name is ${formData.name}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-primary"
-                    style={{ background: '#25D366', borderColor: '#25D366', width: '100%', justifyContent: 'center' }}
+                    className="btn"
+                    style={{ background: '#25D366', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '1rem' }}
                   >
-                    <MessageCircle size={18} /> Connect Directly on WhatsApp
+                    <MessageCircle size={20} /> Connect Directly on WhatsApp
                   </a>
                   <button
                     onClick={() => {
@@ -189,18 +184,18 @@ export const Contact = () => {
                       setFormData({ name: '', phone: '', email: '', mode: 'Live Online via Zoom', subject: '', message: '' });
                     }}
                     className="btn btn-outline"
-                    style={{ width: '100%', justifyContent: 'center' }}
+                    style={{ padding: '1rem' }}
                   >
                     Submit Another Inquiry
                   </button>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
-                <h3 style={{ fontSize: '1.4rem', marginBottom: '1.5rem' }}>Send Us a Message</h3>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <h3 style={{ fontSize: 'var(--text-2xl)', marginBottom: '0.5rem' }}>Send Us a Message</h3>
 
                 {error && (
-                  <div style={{ background: '#FEE2E2', color: '#991B1B', padding: '0.75rem 1rem', borderRadius: '8px', marginBottom: '1.25rem', fontSize: '0.875rem' }}>
+                  <div style={{ background: '#FEF2F2', color: '#B91C1C', padding: '1rem', borderRadius: '12px', fontSize: 'var(--text-sm)', fontWeight: 500, border: '1px solid #FEE2E2' }}>
                     ⚠️ {error}
                   </div>
                 )}
@@ -257,22 +252,21 @@ export const Contact = () => {
 
                 <div className="form-group">
                   <label className="form-label">Subject / Program *</label>
-                  {/* Quick topic buttons */}
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
                     {quickTopics.map((topic) => (
                       <button
                         key={topic}
                         type="button"
                         onClick={() => setFormData({ ...formData, subject: topic })}
-                        className="badge"
                         style={{
-                          background: formData.subject === topic ? 'var(--primary-color)' : 'var(--gray-100)',
-                          color: formData.subject === topic ? '#FFFFFF' : 'var(--gray-700)',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '4px 10px',
                           fontSize: '0.75rem',
-                          borderRadius: '12px'
+                          padding: '0.375rem 0.75rem',
+                          borderRadius: '50px',
+                          fontWeight: 500,
+                          background: formData.subject === topic ? 'var(--color-primary)' : 'var(--color-border)',
+                          color: formData.subject === topic ? 'white' : 'var(--color-text)',
+                          border: 'none',
+                          cursor: 'pointer'
                         }}
                       >
                         {topic}
@@ -289,7 +283,7 @@ export const Contact = () => {
                   />
                 </div>
 
-                {/* Anti-Spam Honeypot Field (Hidden from humans) */}
+                {/* Anti-Spam Honeypot Field */}
                 <div style={{ display: 'none', visibility: 'hidden', position: 'absolute', left: '-9999px' }} aria-hidden="true">
                   <label htmlFor="website_url">Leave this field blank</label>
                   <input
@@ -318,10 +312,10 @@ export const Contact = () => {
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg"
-                  style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}
                   disabled={loading}
+                  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}
                 >
-                  {loading ? 'Submitting Inquiry...' : <><Send size={18} /> Send Inquiry</>}
+                  {loading ? 'Submitting Inquiry...' : <><Send size={20} /> Send Inquiry</>}
                 </button>
               </form>
             )}

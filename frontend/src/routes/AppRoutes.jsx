@@ -13,6 +13,9 @@ import { SubjectDetail } from '../pages/public/SubjectDetail';
 import { LessonDetail } from '../pages/public/LessonDetail';
 import { QuizView } from '../pages/public/QuizView';
 import { Announcements } from '../pages/public/Announcements';
+import { About } from '../pages/public/About';
+import { Contact } from '../pages/public/Contact';
+import NotFound from '../pages/public/NotFound';
 import DynamicPage from '../pages/DynamicPage';
 
 // Admin Pages
@@ -40,6 +43,8 @@ export const AppRoutes = () => {
       {/* Public Website Routes */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<DynamicPage isHome={true} />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/subjects" element={<Subjects />} />
@@ -75,7 +80,9 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route element={<PublicLayout />}>
+        <Route path="*" element={<NotFound />} />
+      </Route>
     </Routes>
   );
 };

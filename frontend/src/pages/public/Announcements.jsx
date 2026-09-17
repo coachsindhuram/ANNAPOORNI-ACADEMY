@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { AnnouncementCard } from '../../components/AnnouncementCard';
+import { BellOff } from 'lucide-react';
 
 export const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -25,16 +26,18 @@ export const Announcements = () => {
   const categories = ['All', 'General', 'Admission', 'Workshop', 'Exam', 'Event'];
 
   return (
-    <div className="container" style={{ padding: '4rem 1.5rem' }}>
-      <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 3rem' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>Academy News & Announcements</h1>
-        <p style={{ color: 'var(--gray-600)', fontSize: '1.1rem' }}>
+    <div className="container" style={{ padding: 'var(--space-12) 1.5rem', minHeight: '60vh' }}>
+      <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto var(--space-12)' }}>
+        <h1 style={{ color: 'var(--color-primary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-3xl)' }}>
+          Academy News & Announcements
+        </h1>
+        <p style={{ fontSize: 'var(--text-lg)', color: 'var(--color-text-muted)' }}>
           Stay updated with official notifications, admission deadlines, workshops, and events.
         </p>
       </div>
 
       {/* Category Pills */}
-      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--space-12)' }}>
         {categories.map((cat) => {
           const val = cat === 'All' ? '' : cat;
           const isActive = category === val;
@@ -43,7 +46,7 @@ export const Announcements = () => {
               key={cat}
               onClick={() => setCategory(val)}
               className={`btn btn-sm ${isActive ? 'btn-primary' : 'btn-outline'}`}
-              style={{ borderRadius: '20px' }}
+              style={{ borderRadius: '50px', padding: '0.5rem 1.2rem' }}
             >
               {cat}
             </button>
@@ -52,13 +55,19 @@ export const Announcements = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '3rem' }}>Loading Announcements...</div>
+        <div className="responsive-card-grid">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="card" style={{ height: '200px', background: 'var(--color-surface-muted)', animation: 'pulse 2s infinite' }}></div>
+          ))}
+        </div>
       ) : announcements.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--gray-500)' }}>
-          No announcements found in this category.
+        <div className="card" style={{ textAlign: 'center', padding: 'var(--space-12)', maxWidth: '600px', margin: '0 auto' }}>
+          <BellOff size={48} style={{ margin: '0 auto var(--space-4)', color: 'var(--color-text-subtle)', opacity: 0.5 }} />
+          <h3 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-2)' }}>No announcements found</h3>
+          <p style={{ color: 'var(--color-text-muted)' }}>There are currently no announcements in this category.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+        <div className="responsive-card-grid">
           {announcements.map(a => <AnnouncementCard key={a.id} announcement={a} />)}
         </div>
       )}

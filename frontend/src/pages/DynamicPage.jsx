@@ -3,8 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import api from '../services/api';
 import PageRenderer from '../components/cms/PageRenderer';
 import { Skeleton } from '../components/Skeleton';
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
+import NotFound from './public/NotFound';
 
 const DynamicPage = ({ isHome = false }) => {
   const { slug } = useParams();
@@ -38,52 +37,29 @@ const DynamicPage = ({ isHome = false }) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow pt-24 px-4 container mx-auto">
-          <Skeleton height="400px" className="mb-8" />
-          <Skeleton height="200px" />
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-grow pt-8 px-4 container mx-auto">
+        <Skeleton height="400px" className="mb-8" />
+        <Skeleton height="200px" />
+      </main>
     );
   }
 
   if (error === 404) {
-    // Basic 404 page for unmatched slugs
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center flex-col text-center px-4">
-          <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
-          <p className="text-xl text-gray-600 mb-8">Page not found.</p>
-          <a href="/" className="bg-primary text-white px-6 py-3 rounded hover:bg-primary-dark transition">Go Home</a>
-        </main>
-        <Footer />
-      </div>
-    );
+    return <NotFound />;
   }
 
   if (error) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <p className="text-red-500">Failed to load page content.</p>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-grow flex items-center justify-center pt-8">
+        <p className="text-red-500">Failed to load page content.</p>
+      </main>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow pt-16">
-        <PageRenderer page={page} />
-      </main>
-      <Footer />
-    </div>
+    <main className="flex-grow">
+      <PageRenderer page={page} />
+    </main>
   );
 };
 
