@@ -17,7 +17,7 @@ def export_backup():
             json_str,
             mimetype='application/json',
             headers={
-                'Content-Disposition': 'attachment; filename=annapoorni_academy_v2_backup.json'
+                'Content-Disposition': 'attachment; filename=Cognova_academy_v2_backup.json'
             }
         )
     except Exception as e:

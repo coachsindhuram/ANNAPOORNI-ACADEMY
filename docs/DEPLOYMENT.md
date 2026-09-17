@@ -1,6 +1,6 @@
-# Annapoorni Academy V2.0 — Production Deployment Guide
+# Cognova V2.0 — Production Deployment Guide
 
-This guide details how to deploy **Annapoorni Academy V2.0** on **Google Cloud Run** with **Cloud Firestore** and **Gmail SMTP Automation**.
+This guide details how to deploy **Cognova V2.0** on **Google Cloud Run** with **Cloud Firestore** and **Gmail SMTP Automation**.
 
 > For the comprehensive production runbook, cost analysis, and DNS setup, see [DEPLOYMENT_V2.md](file:///c:/Shino/sindhu/ai/docs/DEPLOYMENT_V2.md).
 
@@ -17,8 +17,8 @@ This guide details how to deploy **Annapoorni Academy V2.0** on **Google Cloud R
 | `SECRET_KEY` | Required | Default fallback | Flask session secret key. Generate a random secret string. |
 | `JWT_SECRET_KEY` | Required | Default fallback | JWT signature key for Admin authentication tokens. |
 | `JWT_ACCESS_TOKEN_EXPIRES_DAYS` | Optional | `7` | Number of days until JWT admin token expires. |
-| `DATABASE_URL` | Optional | `sqlite:///annapoorni.db` | Local/fallback database URL (in production, Cloud Firestore / native mode is used). |
-| `FRONTEND_URL` | Optional | `https://annapoorniacademy.com` | Production frontend domain for CORS origin permission. |
+| `DATABASE_URL` | Optional | `sqlite:///Cognova.db` | Local/fallback database URL (in production, Cloud Firestore / native mode is used). |
+| `FRONTEND_URL` | Optional | `https://cognova.com` | Production frontend domain for CORS origin permission. |
 | `ADMIN_USERNAME` | Optional | `admin` | Username for initial admin account seeding. |
 | `ADMIN_EMAIL` | Optional | `coach.sindhuram@gmail.com` | Email for initial admin account seeding. |
 | `ADMIN_PASSWORD` | Optional | `$12345678` | Password for initial admin account seeding. |
@@ -60,8 +60,8 @@ mysql -u <db_user> -p <db_name> < database/seed.sql
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/shinoansonanand-netizen/annapoorni-academy.git
-cd annapoorni-academy
+git clone https://github.com/shinoansonanand-netizen/Cognova-academy.git
+cd Cognova-academy
 
 # 2. Copy environment template
 cp .env.example .env

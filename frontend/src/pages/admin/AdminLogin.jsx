@@ -65,7 +65,7 @@ export const AdminLogin = () => {
             Admin Control Portal
           </h2>
           <p style={{ fontSize: '0.875rem', color: '#64748B', marginTop: '0.25rem' }}>
-            Annapoorni Academy System Administration
+            Cognova System Administration
           </p>
         </div>
 

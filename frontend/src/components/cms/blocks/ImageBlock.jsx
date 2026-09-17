@@ -1,0 +1,1 @@
+﻿import React from 'react'; export default function ImageBlock(props) { return <div className='flex justify-center'><img src={props.src || 'https://via.placeholder.com/800x400'} alt={props.alt || 'Image'} className='max-w-full h-auto rounded' /></div>; }

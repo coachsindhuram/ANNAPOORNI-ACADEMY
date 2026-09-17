@@ -1,4 +1,4 @@
-﻿name: Annapoorni Academy V2.0 CI
+name: Cognova V2.0 CI
 
 on:
   push:
@@ -64,4 +64,4 @@ jobs:
 
       - name: Build Production Docker Image
         run: |
-          docker build -t annapoorni-academy:ci .
+          docker build -t Cognova-academy:ci .

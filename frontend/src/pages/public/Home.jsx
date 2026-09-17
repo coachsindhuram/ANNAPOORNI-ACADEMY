@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../../services/api';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
 import { CourseCard } from '../../components/CourseCard';
 import { AnnouncementCard } from '../../components/AnnouncementCard';
-import { ArrowRight, Award, Layers, CheckCircle, FileText, Clock, TrendingUp, Star } from 'lucide-react';
+import CountUp from '../../components/CountUp';
+import TestimonialsSlider from '../../components/TestimonialsSlider';
+import { 
+  ArrowRight, Award, Layers, CheckCircle, FileText, Clock, TrendingUp, Star, 
+  MessageCircle, Sparkles, ChevronDown, ShieldCheck, BookOpen, Users, 
+  Zap, Brain, Compass, Target
+} from 'lucide-react';
 
 export const Home = () => {
+  const { contactInfo } = useSiteSettings();
   const [sections, setSections] = useState([]);
   const [featuredCourses, setFeaturedCourses] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
+  const [openFaq, setOpenFaq] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
+
+  const rawWhatsapp = contactInfo?.whatsapp || contactInfo?.phone || '+919080385589';
+  const whatsappNum = rawWhatsapp.replace(/[^0-9]/g, '');
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
         const [secRes, courseRes, annRes] = await Promise.all([
-          API.get('/api/homepage'),
-          API.get('/api/courses?featured=true'),
-          API.get('/api/announcements?featured=true')
+          API.get('/api/homepage').catch(() => ({ data: [] })),
+          API.get('/api/courses?featured=true').catch(() => ({ data: [] })),
+          API.get('/api/announcements?featured=true').catch(() => ({ data: [] }))
         ]);
         setSections(secRes.data || []);
         setFeaturedCourses(courseRes.data || []);
@@ -33,316 +46,629 @@ export const Home = () => {
 
   const getSection = (key) => sections.find(s => s.section_key === key && s.is_enabled);
 
-  const hero = getSection('hero') || {
-    title: 'Master Vedic Maths, Memory & Speed Reading',
-    subtitle: 'Unlock faster mental calculations, advanced memory recall, national competition practice, and rapid reading efficiency with Coach Sindhu Ram.',
-    image_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1000&auto=format&fit=crop&q=80',
-    cta_text: 'Explore Courses',
-    cta_url: '/courses',
-    secondary_cta_text: 'Browse Subjects',
-    secondary_cta_url: '/subjects',
-    background_style: 'gradient'
+  // Default verified hero content
+  const heroData = getSection('hero');
+  const hero = {
+    title: heroData?.title || 'Master Vedic Maths, Memory & Speed Reading',
+    subtitle: heroData?.subtitle || 'Unlock lightning-fast mental arithmetic, 100% exam recall, and rapid reading efficiency with personalized coaching by Coach Sindhu Ram.',
+    image_url: heroData?.image_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1000&auto=format&fit=crop&q=80',
+    cta_text: heroData?.cta_text || 'Explore Flagship Programs',
+    cta_url: heroData?.cta_url || '/courses',
+    secondary_cta_text: heroData?.secondary_cta_text || 'WhatsApp Consultation',
+    secondary_cta_url: heroData?.secondary_cta_url || '/contact'
   };
 
-  const about = getSection('about') || {
-    title: 'Empowering Minds with Coach Sindhu Ram',
-    subtitle: 'Specialized Coaching in Vedic Mathematics, Memory Training, and Speed Reading.',
-    content: 'Annapoorni Academy offers world-class training in Vedic Maths (16 Sutras for rapid mental arithmetic), Memory Coaching (association & recall techniques), and Speed Reading (rapid information processing). Our students excel in national-level speed competitions and academic challenges.',
-    image_url: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=80',
-    cta_text: 'Learn More About Us',
-    cta_url: '/about',
-    meta: [
-      { label: 'Active Students', value: '15,000+' },
-      { label: 'Expert Courses', value: '120+' },
-      { label: 'Interactive Lessons', value: '850+' },
-      { label: 'Success Rate', value: '98%' }
-    ]
-  };
-
-  const featured = getSection('featured_courses') || {
-    title: 'Flagship Coaching Programs',
-    subtitle: 'Master mental arithmetic sutras, retention strategies, and rapid reading with Coach Sindhu Ram.'
-  };
-
-  const displayCourses = featuredCourses.length > 0 ? featuredCourses : [
+  const defaultCourses = [
     {
       id: 1,
+      slug: 'vedic-maths-speed-calculation-mastery',
       title: 'Vedic Maths & Speed Calculation Mastery',
       description: 'Learn 16 Vedic Sutras for lightning-fast mental arithmetic, rapid multiplication, and competition prep.',
       category: 'Vedic Maths',
       difficulty: 'All Levels',
+      duration: '4 Weeks',
+      age_group: 'Grade 4 - 12 & Adults',
       thumbnail_url: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=80'
     },
     {
       id: 2,
+      slug: 'memory-coaching-retention-masterclass',
       title: 'Memory Coaching & Retention Masterclass',
       description: 'Master cognitive recall techniques, mnemonic systems, mind mapping, and long-term memory strategy.',
       category: 'Memory Coaching',
       difficulty: 'All Levels',
+      duration: '3 Weeks',
+      age_group: 'Grade 6 - 12 & Adults',
       thumbnail_url: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&auto=format&fit=crop&q=80'
     },
     {
       id: 3,
+      slug: 'speed-reading-rapid-information-processing',
       title: 'Speed Reading & Rapid Information Processing',
       description: 'Double your reading speed, eliminate sub-vocalization, expand peripheral vision, and retain more text.',
       category: 'Speed Reading',
       difficulty: 'All Levels',
+      duration: '2 Weeks',
+      age_group: 'Grade 7 - 12 & Adults',
       thumbnail_url: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&auto=format&fit=crop&q=80'
     }
   ];
 
-  const benefits = getSection('benefits') || {
-    title: 'Why Choose Annapoorni Academy',
-    subtitle: 'Everything you need to excel in mental mathematics, competition practice, and rapid information processing.',
-    meta: [
-      { title: 'Direct Coaching', desc: 'Personal guidance by Coach Sindhu Ram in Zoom & In-Person offline batches.' },
-      { title: '16 Vedic Sutras', desc: 'Master rapid mental calculation shortcuts for competitive exam success.' },
-      { title: 'Memory Techniques', desc: 'Proven mnemonic strategies for 100% exam recall and retention.' },
-      { title: 'Speed Reading', desc: 'Expand eye span and double reading speed with high comprehension.' }
-    ]
-  };
+  const displayCourses = featuredCourses.length > 0 ? featuredCourses : defaultCourses;
+  const categories = ['All', ...new Set(displayCourses.map(c => c.category).filter(Boolean))];
+  const filteredCourses = selectedCategory === 'All' 
+    ? displayCourses 
+    : displayCourses.filter(c => c.category === selectedCategory);
 
-  const testimonials = getSection('testimonials') || {
-    title: 'Student & Parent Testimonials',
-    subtitle: 'Hear from students who achieved national-level competition ranks and academic success.',
-    meta: [
-      {
-        quote: 'Coach Sindhu Ram’s Vedic Maths techniques helped me calculate complex math problems in seconds during my national competition!',
-        name: 'Kavitha R.',
-        role: 'National Competition Rank Holder',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80'
-      },
-      {
-        quote: 'The memory coaching session completely transformed my daughter’s exam prep. She retains formulas effortlessly.',
-        name: 'Suresh Kumar',
-        role: 'Parent of Student',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80'
-      }
-    ]
-  };
-
-  const announcementsSec = getSection('announcements') || {
-    title: 'Academy Notices & Updates',
-    subtitle: 'Latest news on upcoming Zoom batches, offline workshops, and speed math competitions.'
-  };
-
-  const cta = getSection('cta') || {
-    title: 'Ready to Boost Your Mental Calculation & Memory Skills?',
-    subtitle: 'Join Coach Sindhu Ram’s live Zoom and offline coaching batches today.',
-    cta_text: 'Enroll Now & Get Details',
-    cta_url: '/courses'
-  };
-
-  const getBenefitIcon = (title) => {
-    const t = (title || '').toLowerCase();
-    if (t.includes('expert')) return <Award size={24} />;
-    if (t.includes('structured')) return <Layers size={24} />;
-    if (t.includes('assessments')) return <CheckCircle size={24} />;
-    if (t.includes('resources')) return <FileText size={24} />;
-    if (t.includes('pace')) return <Clock size={24} />;
-    return <TrendingUp size={24} />;
-  };
+  const homeFaqs = [
+    {
+      q: 'How are the batches conducted at Cognova?',
+      a: 'We conduct both Live Interactive Zoom Batches for global students and In-Person Classroom Coaching with Coach Sindhu Ram. Batches are intentionally capped in size to provide dedicated mentorship and instant doubt resolution.'
+    },
+    {
+      q: 'What is the recommended age group for Vedic Maths and Memory Coaching?',
+      a: 'Students from Grade 4 onwards (age 9+) can start Vedic Maths. Memory Coaching is suitable from Grade 6 onwards, while Speed Reading is recommended for Grade 7 to adults.'
+    },
+    {
+      q: 'How do I secure a seat in an upcoming cohort?',
+      a: 'Simply click "Enroll Now" on any course card or message admissions directly via WhatsApp. Our academic coordinator will share timetable options, batch dates, and enrollment details.'
+    },
+    {
+      q: 'Are digital workbooks and reference materials included?',
+      a: 'Yes. Enrolled students receive structured digital practice workbooks, mental calculation cheat sheets, and ongoing access to problem-solving drills.'
+    },
+    {
+      q: 'Do you prepare students for National and State Speed Math Olympiads?',
+      a: 'Yes. Our advanced batches include competition-specific speed drills, timed testing modules, and accuracy audits that have produced numerous state and national rank holders.'
+    }
+  ];
 
   return (
-    <div>
-      {/* Hero Section */}
-      {hero && (
-        <section style={{
-          background: hero.background_style === 'gradient'
-            ? 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)'
-            : 'var(--primary-color)',
-          color: '#FFFFFF',
-          padding: '5rem 0',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <div className="container responsive-grid-1-1">
-            <div className="animate-fade-in">
-              <h1 style={{ fontSize: '3rem', lineHeight: 1.15, fontWeight: 800, marginBottom: '1.25rem', color: '#FFFFFF' }}>
-                {hero.title || 'Learn Better. Grow Smarter.'}
-              </h1>
-              <p style={{ fontSize: '1.15rem', opacity: 0.92, lineHeight: 1.6, marginBottom: '2rem' }}>
-                {hero.subtitle || 'Discover world-class educational courses, subjects, lessons, and interactive assessments.'}
-              </p>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                {hero.cta_text && (
-                  <Link to={hero.cta_url || '/courses'} className="btn btn-accent btn-lg">
-                    {hero.cta_text} <ArrowRight size={18} />
-                  </Link>
-                )}
-                {hero.secondary_cta_text && (
-                  <Link to={hero.secondary_cta_url || '/subjects'} className="btn btn-outline btn-lg" style={{ color: '#FFFFFF', borderColor: '#FFFFFF' }}>
-                    {hero.secondary_cta_text}
-                  </Link>
-                )}
+    <div className="home-page-container">
+      {/* =====================================================================
+          1. CINEMATIC PREMIUM HERO SECTION
+          ===================================================================== */}
+      <section className="hero-section" aria-label="Introduction">
+        {/* Ambient Glow Orbs */}
+        <div className="hero-glow-orb hero-glow-1" style={{ top: '-10%', left: '15%', width: '450px', height: '450px' }} />
+        <div className="hero-glow-orb hero-glow-2" style={{ bottom: '-10%', right: '10%', width: '500px', height: '500px' }} />
+
+        <div className="container" style={{ position: 'relative', zIndex: 3 }}>
+          <div className="responsive-grid-1-1" style={{ alignItems: 'center', gap: 'var(--space-12)' }}>
+            
+            {/* Left Content Column */}
+            <div style={{ opacity: 1 }}>
+              {/* Eyebrow */}
+              <div className="hero-stagger-1">
+                <div className="badge-glow">
+                  <Sparkles size={15} style={{ color: 'var(--color-accent-light)' }} />
+                  <span>Premier Cognitive & Mental Math Academy</span>
+                </div>
               </div>
-            </div>
 
-            {hero.image_url && (
-              <div style={{ position: 'relative' }}>
-                <img
-                  src={hero.image_url}
-                  alt={hero.title}
-                  style={{ borderRadius: '20px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)', width: '100%', maxHeight: '420px', objectFit: 'cover' }}
-                />
+              {/* H1 Heading */}
+              <div className="hero-stagger-2">
+                <h1 style={{
+                  fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
+                  lineHeight: 1.12,
+                  fontWeight: 800,
+                  letterSpacing: '-0.03em',
+                  marginBottom: 'var(--space-5)',
+                  color: '#FFFFFF'
+                }}>
+                  Master <span style={{
+                    background: 'linear-gradient(135deg, #60A5FA 0%, #93C5FD 50%, #F59E0B 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    display: 'inline-block'
+                  }}>Vedic Maths</span>, Memory & Speed Reading
+                </h1>
               </div>
-            )}
-          </div>
-        </section>
-      )}
 
-      {/* About Section */}
-      {about && (
-        <section style={{ padding: '5rem 0' }}>
-          <div className="container responsive-grid-1-1">
-            {about.image_url && (
-              <img
-                src={about.image_url}
-                alt={about.title}
-                style={{ borderRadius: '16px', boxShadow: 'var(--shadow-style)', width: '100%', maxHeight: '400px', objectFit: 'cover' }}
-              />
-            )}
-            <div>
-              <span style={{ color: 'var(--secondary-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.85rem' }}>
-                ABOUT ANNAPOORNI ACADEMY
-              </span>
-              <h2 style={{ fontSize: '2.25rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-                {about.title}
-              </h2>
-              <p style={{ color: 'var(--gray-600)', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                {about.content || about.subtitle}
-              </p>
+              {/* Description */}
+              <div className="hero-stagger-3">
+                <p style={{
+                  fontSize: 'clamp(1rem, 2vw, 1.18rem)',
+                  lineHeight: 1.65,
+                  color: 'rgba(241, 245, 249, 0.88)',
+                  maxWidth: '560px',
+                  marginBottom: 'var(--space-8)'
+                }}>
+                  {hero.subtitle}
+                </p>
+              </div>
 
-              {/* Statistics Grid */}
-              {about.meta && about.meta.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2rem' }}>
-                  {about.meta.map((stat, idx) => (
-                    <div key={idx} style={{ background: 'var(--gray-50)', padding: '1rem 1.25rem', borderRadius: '10px' }}>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary-color)' }}>{stat.value}</div>
-                      <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)', fontWeight: 600 }}>{stat.label}</div>
-                    </div>
+              {/* Dual Action CTAs */}
+              <div className="hero-stagger-4" style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', marginBottom: 'var(--space-8)' }}>
+                <Link 
+                  to={hero.cta_url || '/courses'} 
+                  className="btn btn-accent btn-lg"
+                  style={{
+                    boxShadow: '0 8px 24px rgba(217, 119, 6, 0.35)',
+                    fontWeight: 700
+                  }}
+                >
+                  {hero.cta_text || 'Explore Flagship Programs'} <ArrowRight size={18} />
+                </Link>
+
+                <a
+                  href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent('Hello Coach Sindhu Ram, I would like guidance on your coaching programs at Cognova.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary btn-lg"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderColor: 'rgba(255, 255, 255, 0.25)',
+                    color: '#FFFFFF',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)'
+                  }}
+                >
+                  <MessageCircle size={18} style={{ color: '#25D366' }} /> WhatsApp Consultation
+                </a>
+              </div>
+
+              {/* Social Proof Mini Bar */}
+              <div className="hero-stagger-5" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', paddingTop: 'var(--space-4)', borderTop: '1px solid rgba(255, 255, 255, 0.12)' }}>
+                <div style={{ display: 'flex', gap: '3px', color: '#F59E0B' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={15} fill="#F59E0B" />
                   ))}
                 </div>
-              )}
-
-              {about.cta_text && (
-                <Link to={about.cta_url || '/about'} className="btn btn-primary">
-                  {about.cta_text} <ArrowRight size={16} />
-                </Link>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Featured Courses Section */}
-      {featured && (
-        <section style={{ padding: '5rem 0', background: 'var(--gray-50)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 3rem' }}>
-              <span style={{ color: 'var(--secondary-color)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.85rem' }}>
-                CURATED LEARNING
-              </span>
-              <h2 style={{ fontSize: '2.25rem', marginTop: '0.5rem' }}>{featured.title}</h2>
-              <p style={{ color: 'var(--gray-600)', marginTop: '0.5rem' }}>{featured.subtitle}</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
-              {displayCourses.slice(0, 3).map((c) => (
-                <CourseCard key={c.id} course={c} />
-              ))}
-            </div>
-
-            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <Link to="/courses" className="btn btn-outline btn-lg">
-                View All Courses <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Learning Benefits Section */}
-      {benefits && (
-        <section style={{ padding: '5rem 0' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 3.5rem' }}>
-              <h2 style={{ fontSize: '2.25rem' }}>{benefits.title}</h2>
-              <p style={{ color: 'var(--gray-600)', marginTop: '0.5rem' }}>{benefits.subtitle}</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-              {(benefits.meta || []).map((card, idx) => (
-                <div key={idx} className="glass-card" style={{ padding: '2rem' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '12px',
-                    background: 'rgba(30, 58, 138, 0.08)',
-                    color: 'var(--primary-color)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '1.25rem'
-                  }}>
-                    {getBenefitIcon(card.title)}
-                  </div>
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>{card.title}</h3>
-                  <p style={{ fontSize: '0.925rem', color: 'var(--gray-600)', lineHeight: 1.5 }}>{card.desc}</p>
+                <div style={{ fontSize: 'var(--text-xs)', color: 'rgba(241, 245, 249, 0.8)' }}>
+                  <strong style={{ color: '#FFFFFF' }}>4.9/5 Rating</strong> from over 15,000+ students and parents across 12+ countries.
                 </div>
+              </div>
+            </div>
+
+            {/* Right Visual Stack with Layered Cards */}
+            <div className="hero-stagger-visual" style={{ position: 'relative' }}>
+              <div style={{
+                position: 'relative',
+                borderRadius: 'var(--radius-2xl)',
+                overflow: 'hidden',
+                boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.7)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                background: '#0B132B'
+              }}>
+                <img
+                  src={hero.image_url}
+                  alt="Cognova Coaching"
+                  loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1000&auto=format&fit=crop&q=80';
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '460px',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(180deg, transparent 55%, rgba(8, 13, 26, 0.88) 100%)'
+                }} />
+              </div>
+
+              {/* Floating Badge 1: Live Batches */}
+              <div className="card-glass-dark" style={{
+                position: 'absolute',
+                top: '-18px',
+                right: '-12px',
+                padding: '12px 18px',
+                borderRadius: 'var(--radius-lg)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                boxShadow: 'var(--shadow-xl)',
+                animation: 'float 4s ease-in-out infinite'
+              }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: 'var(--radius-full)',
+                  background: 'rgba(5, 150, 105, 0.2)',
+                  color: '#10B981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Zap size={18} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.7)' }}>Admissions Open</div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: '#FFFFFF' }}>Live Zoom & Offline</div>
+                </div>
+              </div>
+
+              {/* Floating Badge 2: Proven Mastery */}
+              <div className="card-glass-dark" style={{
+                position: 'absolute',
+                bottom: '-22px',
+                left: '-12px',
+                padding: '14px 20px',
+                borderRadius: 'var(--radius-lg)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: 'var(--shadow-xl)'
+              }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: 'var(--radius-full)',
+                  background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Brain size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: '#FFFFFF' }}>16 Ancient Sutras</div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-accent-light)' }}>10x Mental Speed</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          2. ANIMATED STATISTICS TRUST BAR
+          ===================================================================== */}
+      <section style={{
+        background: 'var(--color-surface)',
+        borderBottom: '1px solid var(--color-border)',
+        padding: 'var(--space-8) 0'
+      }}>
+        <div className="container">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--space-6)',
+            textAlign: 'center'
+          }}>
+            <div style={{ padding: 'var(--space-3)' }}>
+              <div style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 800, color: 'var(--color-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                <CountUp end={15000} suffix="+" />
+              </div>
+              <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                Trained Students Worldwide
+              </div>
+            </div>
+
+            <div style={{ padding: 'var(--space-3)' }}>
+              <div style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 800, color: 'var(--color-accent)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                <CountUp end={16} suffix=" Sutras" />
+              </div>
+              <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                Vedic Speed Calculation
+              </div>
+            </div>
+
+            <div style={{ padding: 'var(--space-3)' }}>
+              <div style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 800, color: 'var(--color-primary-dark)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                <CountUp end={99} suffix="%" />
+              </div>
+              <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                Exam Recall & Distinction
+              </div>
+            </div>
+
+            <div style={{ padding: 'var(--space-3)' }}>
+              <div style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', fontWeight: 800, color: '#059669', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                <CountUp end={10} prefix="" suffix="x" />
+              </div>
+              <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--color-text-muted)', marginTop: '6px' }}>
+                Faster Problem Resolution
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          3. FLAGSHIP COACHING PROGRAMS WITH FILTER TABS
+          ===================================================================== */}
+      <section style={{ padding: 'var(--space-16) 0', background: 'var(--color-surface-muted)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto var(--space-8)' }}>
+            <span style={{
+              color: 'var(--color-accent)',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontSize: 'var(--text-xs)'
+            }}>
+              Curated Curriculum
+            </span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+              Flagship Coaching Programs
+            </h2>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', margin: 0 }}>
+              Structured, high-impact programs designed to elevate calculation agility, memory retention, and rapid comprehension.
+            </p>
+
+            {/* Category Filter Pills */}
+            <div style={{
+              display: 'inline-flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '8px',
+              marginTop: 'var(--space-6)',
+              background: 'var(--color-surface)',
+              padding: '6px',
+              borderRadius: 'var(--radius-full)',
+              border: '1px solid var(--color-border)'
+            }}>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-full)',
+                    border: 'none',
+                    fontSize: 'var(--text-sm)',
+                    fontWeight: selectedCategory === cat ? 700 : 500,
+                    background: selectedCategory === cat ? 'var(--color-primary)' : 'transparent',
+                    color: selectedCategory === cat ? '#FFFFFF' : 'var(--color-text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
           </div>
-        </section>
-      )}
 
-      {/* Testimonials Section */}
-      {testimonials && (
-        <section style={{ padding: '5rem 0', background: 'var(--gray-50)' }}>
-          <div className="container">
-            <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto 3.5rem' }}>
-              <h2 style={{ fontSize: '2.25rem' }}>{testimonials.title}</h2>
-              <p style={{ color: 'var(--gray-600)', marginTop: '0.5rem' }}>{testimonials.subtitle}</p>
+          {/* Courses Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: 'var(--space-8)'
+          }}>
+            {filteredCourses.map((c) => (
+              <CourseCard key={c.id || c.slug} course={c} />
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 'var(--space-10)' }}>
+            <Link to="/courses" className="btn btn-secondary btn-lg">
+              Explore Complete Academy Catalog <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          4. THE COGNITIVE MATRIX (DARK LUXURY SECTION)
+          ===================================================================== */}
+      <section style={{
+        background: 'var(--color-surface-dark)',
+        color: '#FFFFFF',
+        padding: 'var(--space-16) 0',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto var(--space-12)' }}>
+            <span style={{
+              color: 'var(--color-accent-light)',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontSize: 'var(--text-xs)'
+            }}>
+              The Cognitive Architecture
+            </span>
+            <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)', color: '#FFFFFF', marginTop: 'var(--space-2)', marginBottom: 'var(--space-4)' }}>
+              Why Cognova Excels
+            </h2>
+            <p style={{ color: 'rgba(241, 245, 249, 0.8)', fontSize: 'var(--text-md)', lineHeight: 1.6, margin: 0 }}>
+              Our methodology bridges ancient Vedic computational secrets with modern cognitive neuroscience to unlock rapid intelligence.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'var(--space-6)'
+          }}>
+            <div className="card-glass-dark" style={{ padding: 'var(--space-8)' }}>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: 'var(--radius-lg)',
+                background: 'rgba(37, 99, 235, 0.2)',
+                color: '#60A5FA',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--space-5)'
+              }}>
+                <Sparkles size={26} />
+              </div>
+              <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
+                16 Vedic Sutras System
+              </h3>
+              <p style={{ color: 'rgba(241, 245, 249, 0.75)', fontSize: 'var(--text-sm)', lineHeight: 1.6, margin: 0 }}>
+                Ancient arithmetic formulas that reduce multi-step multiplications, roots, and divisions to 1-line mental operations.
+              </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-              {(testimonials.meta || []).map((item, idx) => (
-                <div key={idx} className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', gap: '4px', color: 'var(--accent-color)', marginBottom: '1rem' }}>
-                    {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="var(--accent-color)" />)}
-                  </div>
-                  <p style={{ fontStyle: 'italic', color: 'var(--gray-700)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                    "{item.quote}"
-                  </p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--gray-200)' }}>
-                    <img src={item.avatar} alt={item.name} style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover' }} />
-                    <div>
-                      <div style={{ fontWeight: 700, color: 'var(--text-color)' }}>{item.name}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--gray-500)' }}>{item.role}</div>
+            <div className="card-glass-dark" style={{ padding: 'var(--space-8)' }}>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: 'var(--radius-lg)',
+                background: 'rgba(217, 119, 6, 0.2)',
+                color: '#FBBF24',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--space-5)'
+              }}>
+                <Brain size={26} />
+              </div>
+              <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
+                Mnemonic Retention
+              </h3>
+              <p style={{ color: 'rgba(241, 245, 249, 0.75)', fontSize: 'var(--text-sm)', lineHeight: 1.6, margin: 0 }}>
+                Neuro-associative encoding techniques that enable students to memorize tables, historical dates, and scientific formulas with 100% permanence.
+              </p>
+            </div>
+
+            <div className="card-glass-dark" style={{ padding: 'var(--space-8)' }}>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: 'var(--radius-lg)',
+                background: 'rgba(5, 150, 105, 0.2)',
+                color: '#34D399',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--space-5)'
+              }}>
+                <BookOpen size={26} />
+              </div>
+              <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
+                Speed Reading & Span
+              </h3>
+              <p style={{ color: 'rgba(241, 245, 249, 0.75)', fontSize: 'var(--text-sm)', lineHeight: 1.6, margin: 0 }}>
+                Eliminate sub-vocalization and expand your eye fixation span to absorb textbooks and research papers at 2x-3x normal speed.
+              </p>
+            </div>
+
+            <div className="card-glass-dark" style={{ padding: 'var(--space-8)' }}>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: 'var(--radius-lg)',
+                background: 'rgba(124, 58, 237, 0.2)',
+                color: '#A78BFA',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 'var(--space-5)'
+              }}>
+                <Target size={26} />
+              </div>
+              <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
+                Olympiad & Exam Mastery
+              </h3>
+              <p style={{ color: 'rgba(241, 245, 249, 0.75)', fontSize: 'var(--text-sm)', lineHeight: 1.6, margin: 0 }}>
+                Rigorous timed mock drills and competition frameworks that build unbeatable composure and precision under exam pressure.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================================
+          5. TESTIMONIALS SLIDER SECTION
+          ===================================================================== */}
+      <section style={{ padding: 'var(--space-16) 0', background: 'var(--color-surface)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '650px', margin: '0 auto var(--space-10)' }}>
+            <span style={{
+              color: 'var(--color-accent)',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontSize: 'var(--text-xs)'
+            }}>
+              Proven Transformations
+            </span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+              Trusted by Students & Parents
+            </h2>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', margin: 0 }}>
+              Real stories of academic breakthroughs, Olympiad ranks, and cognitive speed transformations.
+            </p>
+          </div>
+
+          <TestimonialsSlider />
+        </div>
+      </section>
+
+      {/* =====================================================================
+          6. INTERACTIVE FAQ ACCORDION
+          ===================================================================== */}
+      <section style={{ padding: 'var(--space-16) 0', background: 'var(--color-surface-muted)' }}>
+        <div className="container" style={{ maxWidth: '840px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
+            <span style={{
+              color: 'var(--color-accent)',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontSize: 'var(--text-xs)'
+            }}>
+              Frequently Asked Questions
+            </span>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', marginTop: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
+              Everything You Need to Know
+            </h2>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: 'var(--text-md)', margin: 0 }}>
+              Batch schedules, learning modes, materials, and enrollment guidance.
+            </p>
+          </div>
+
+          <div className="faq-accordion">
+            {homeFaqs.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div key={idx} className={`faq-item ${isOpen ? 'open' : ''}`}>
+                  <button
+                    className="faq-question"
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    aria-expanded={isOpen}
+                  >
+                    <span>{faq.q}</span>
+                    <ChevronDown size={18} className="faq-icon" />
+                  </button>
+                  <div className="faq-body">
+                    <div className="faq-content">
+                      {faq.a}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Latest Announcements */}
-      {announcementsSec && (
-        <section style={{ padding: '5rem 0' }}>
+      {/* =====================================================================
+          7. LATEST ANNOUNCEMENTS
+          ===================================================================== */}
+      {announcements.length > 0 && (
+        <section style={{ padding: 'var(--space-16) 0', background: 'var(--color-surface)' }}>
           <div className="container">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-8)', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
               <div>
-                <h2 style={{ fontSize: '2.25rem' }}>{announcementsSec.title}</h2>
-                <p style={{ color: 'var(--gray-600)', marginTop: '0.4rem' }}>{announcementsSec.subtitle}</p>
+                <span style={{ color: 'var(--color-accent)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 'var(--text-xs)' }}>
+                  Notices & Updates
+                </span>
+                <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.2rem)', marginTop: 'var(--space-2)', margin: 0 }}>
+                  Academy Announcements
+                </h2>
               </div>
-              <Link to="/announcements" className="btn btn-outline">
-                All Notices <ArrowRight size={16} />
+              <Link to="/announcements" className="btn btn-secondary">
+                View All Notices <ArrowRight size={16} />
               </Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)' }}>
               {announcements.slice(0, 3).map((a) => (
                 <AnnouncementCard key={a.id} announcement={a} />
               ))}
@@ -351,25 +677,53 @@ export const Home = () => {
         </section>
       )}
 
-      {/* Call To Action */}
-      {cta && (
-        <section style={{
-          padding: '5rem 0',
-          background: 'var(--footer-color)',
-          color: '#FFFFFF',
-          textAlign: 'center'
-        }}>
-          <div className="container" style={{ maxWidth: '750px' }}>
-            <h2 style={{ fontSize: '2.5rem', color: '#FFFFFF', marginBottom: '1rem' }}>{cta.title}</h2>
-            <p style={{ fontSize: '1.1rem', color: 'var(--gray-300)', marginBottom: '2rem' }}>{cta.subtitle}</p>
-            {cta.cta_text && (
-              <Link to={cta.cta_url || '/courses'} className="btn btn-accent btn-lg">
-                {cta.cta_text} <ArrowRight size={18} />
-              </Link>
-            )}
+      {/* =====================================================================
+          8. HIGH-CONVERTING FINAL CTA BANNER
+          ===================================================================== */}
+      <section style={{
+        padding: 'var(--space-16) 0',
+        background: 'radial-gradient(100% 100% at 50% 0%, #152E58 0%, #080D1A 100%)',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div className="hero-glow-orb hero-glow-1" style={{ top: '-20%', left: '30%', width: '450px', height: '450px' }} />
+        <div className="container" style={{ maxWidth: '780px', position: 'relative', zIndex: 2 }}>
+          <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', color: '#FFFFFF', marginBottom: 'var(--space-4)', letterSpacing: '-0.02em' }}>
+            Ready to Unlock Your Full Cognitive Potential?
+          </h2>
+          <p style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'rgba(241, 245, 249, 0.85)', lineHeight: 1.65, marginBottom: 'var(--space-8)' }}>
+            Join Coach Sindhu Ram’s live Zoom cohorts and classroom batches. Start thinking, calculating, and learning at the highest level.
+          </p>
+          <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link 
+              to="/courses" 
+              className="btn btn-accent btn-lg"
+              style={{
+                boxShadow: '0 8px 25px rgba(217, 119, 6, 0.4)',
+                fontWeight: 700
+              }}
+            >
+              Explore All Programs <ArrowRight size={18} />
+            </Link>
+            <a
+              href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent('Hello Coach Sindhu Ram, I am interested in enrolling in Cognova programs.')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary btn-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                borderColor: 'rgba(255, 255, 255, 0.25)',
+                color: '#FFFFFF',
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              <MessageCircle size={18} style={{ color: '#25D366' }} /> Chat on WhatsApp
+            </a>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </div>
   );
 };

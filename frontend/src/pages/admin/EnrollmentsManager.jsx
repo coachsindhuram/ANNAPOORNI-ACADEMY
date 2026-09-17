@@ -138,7 +138,7 @@ export const EnrollmentsManager = () => {
                     <div style={{ fontWeight: 700, fontSize: '1rem' }}>{item.student_name}</div>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '4px', fontSize: '0.85rem', flexWrap: 'wrap' }}>
                       <a
-                        href={`https://wa.me/${item.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${item.student_name}, thank you for inquiring about ${item.course_title} at Annapoorni Academy!`)}`}
+                        href={`https://wa.me/${item.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${item.student_name}, thank you for inquiring about ${item.course_title} at Cognova!`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ color: '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}

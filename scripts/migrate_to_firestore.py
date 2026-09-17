@@ -1,5 +1,5 @@
 """
-Firestore Migration CLI Script for Annapoorni Academy V2.0
+Firestore Migration CLI Script for Cognova V2.0
 Migrates all SQL database records (SQLite / MySQL) to Google Cloud Firestore collections.
 
 Usage:

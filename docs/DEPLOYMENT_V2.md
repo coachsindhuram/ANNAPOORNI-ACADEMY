@@ -1,6 +1,6 @@
-# Annapoorni Academy V2.0 — Production Deployment & Google Cloud Run Runbook
+# Cognova V2.0 — Production Deployment & Google Cloud Run Runbook
 
-> **Target Production Domain:** `annapoorniacademy.com`  
+> **Target Production Domain:** `cognova.com`  
 > **Infrastructure Model:** Ultra-Low-Cost Single-Domain Container on **Google Cloud Run** + **Firestore (Free Tier)** + **Cloud Storage (Free Tier)**  
 > **Target Cloud Cost:** Approaching **₹0/month** within Google Cloud Free Quotas for low-to-medium traffic.
 
@@ -9,7 +9,7 @@
 ## 1. Architecture Overview
 
 ```
-                      [ annapoorniacademy.com ]
+                      [ cognova.com ]
                                   │
                                   ▼
            [ Google Cloud Managed DNS / SSL Certificate ]
@@ -68,16 +68,16 @@
 
 ```bash
 # 1. Create a new project (or use existing)
-gcloud projects create annapoorni-academy-prod --name="Annapoorni Academy"
+gcloud projects create Cognova-academy-prod --name="Cognova"
 
 # 2. Set default project
-gcloud config set project annapoorni-academy-prod
+gcloud config set project Cognova-academy-prod
 
 # 3. Link your billing account to the project (required by GCP to enable APIs, even in free tier)
 # List billing accounts:
 gcloud billing accounts list
 # Link billing account:
-gcloud billing projects link annapoorni-academy-prod --billing-account=YOUR_BILLING_ACCOUNT_ID
+gcloud billing projects link Cognova-academy-prod --billing-account=YOUR_BILLING_ACCOUNT_ID
 
 # 4. Enable required Google Cloud APIs
 gcloud services enable \
@@ -103,10 +103,10 @@ gcloud firestore databases create --location=asia-south1 --type=firestore-native
 
 ```bash
 # Create standard storage bucket
-gcloud storage buckets create gs://annapoorni-academy-media --location=asia-south1 --default-storage-class=STANDARD
+gcloud storage buckets create gs://Cognova-academy-media --location=asia-south1 --default-storage-class=STANDARD
 
 # Make bucket publicly readable for website images
-gcloud storage buckets add-iam-policy-binding gs://annapoorni-academy-media \
+gcloud storage buckets add-iam-policy-binding gs://Cognova-academy-media \
     --member=allUsers \
     --role=roles/storage.objectViewer
 ```
@@ -117,11 +117,11 @@ gcloud storage buckets add-iam-policy-binding gs://annapoorni-academy-media \
 
 ```bash
 # 1. Build and push image using Google Cloud Build
-gcloud builds submit --tag gcr.io/annapoorni-academy-prod/annapoorni-web:v2.0
+gcloud builds submit --tag gcr.io/Cognova-academy-prod/Cognova-web:v2.0
 
 # 2. Deploy single-domain container to Cloud Run with scale-to-zero settings
-gcloud run deploy annapoorni-web \
-    --image gcr.io/annapoorni-academy-prod/annapoorni-web:v2.0 \
+gcloud run deploy Cognova-web \
+    --image gcr.io/Cognova-academy-prod/Cognova-web:v2.0 \
     --platform managed \
     --region asia-south1 \
     --allow-unauthenticated \
@@ -136,14 +136,14 @@ FLASK_ENV=production,\
 PORT=8080,\
 SECRET_KEY=$(openssl rand -hex 24),\
 JWT_SECRET_KEY=$(openssl rand -hex 24),\
-GOOGLE_CLOUD_PROJECT=annapoorni-academy-prod,\
-FIRESTORE_PROJECT_ID=annapoorni-academy-prod,\
+GOOGLE_CLOUD_PROJECT=Cognova-academy-prod,\
+FIRESTORE_PROJECT_ID=Cognova-academy-prod,\
 DB_TYPE=firestore,\
-STORAGE_BUCKET=annapoorni-academy-media,\
+STORAGE_BUCKET=Cognova-academy-media,\
 ADMIN_USERNAME=admin,\
 ADMIN_EMAIL=coach.sindhuram@gmail.com,\
 ADMIN_PASSWORD=YOUR_STRONG_ADMIN_PASSWORD,\
-FRONTEND_URL=https://annapoorniacademy.com"
+FRONTEND_URL=https://cognova.com"
 ```
 
 ---
@@ -153,24 +153,24 @@ FRONTEND_URL=https://annapoorniacademy.com"
 Run the automated migration tool to populate all courses, subjects, lessons, quizzes, settings, and announcements into Firestore:
 
 ```bash
-python scripts/migrate_to_firestore.py --project annapoorni-academy-prod
+python scripts/migrate_to_firestore.py --project Cognova-academy-prod
 ```
 
 ---
 
-### Step 3.6: Map Custom Domain (`annapoorniacademy.com`)
+### Step 3.6: Map Custom Domain (`cognova.com`)
 
 ```bash
 # 1. Map custom domain to your Cloud Run service
 gcloud beta run domain-mappings create \
-    --service annapoorni-web \
-    --domain annapoorniacademy.com \
+    --service Cognova-web \
+    --domain cognova.com \
     --region asia-south1
 
 # Optional: Map www subdomain
 gcloud beta run domain-mappings create \
-    --service annapoorni-web \
-    --domain www.annapoorniacademy.com \
+    --service Cognova-web \
+    --domain www.cognova.com \
     --region asia-south1
 ```
 
@@ -193,7 +193,7 @@ Log into your domain registrar (GoDaddy, Namecheap, Google Domains, Hostinger, e
 | **CNAME** | `www` | `ghs.googlehosted.com.` | 3600 |
 
 > [!NOTE]
-> Google Cloud automatically provisions a **managed SSL / HTTPS certificate** for `annapoorniacademy.com` once the DNS records propagate (typically within 15–60 minutes).
+> Google Cloud automatically provisions a **managed SSL / HTTPS certificate** for `cognova.com` once the DNS records propagate (typically within 15–60 minutes).
 
 ---
 
@@ -252,8 +252,8 @@ python scripts/export_data.py backup_snapshot.json
 
 | URL Path | Method | Expected Status | Purpose |
 | :--- | :--- | :--- | :--- |
-| `https://annapoorniacademy.com/health` | GET | `200 OK` (`{"status": "healthy"}`) | Load balancer / uptime health probe |
-| `https://annapoorniacademy.com/robots.txt` | GET | `200 OK` | Dynamic search engine indexing rules |
-| `https://annapoorniacademy.com/sitemap.xml` | GET | `200 OK` | Dynamic XML sitemap with all published courses |
-| `https://annapoorniacademy.com/api/courses` | GET | `200 OK` | Dynamic course catalog |
-| `https://annapoorniacademy.com/admin/login` | GET | `200 OK` | Admin control portal |
+| `https://cognova.com/health` | GET | `200 OK` (`{"status": "healthy"}`) | Load balancer / uptime health probe |
+| `https://cognova.com/robots.txt` | GET | `200 OK` | Dynamic search engine indexing rules |
+| `https://cognova.com/sitemap.xml` | GET | `200 OK` | Dynamic XML sitemap with all published courses |
+| `https://cognova.com/api/courses` | GET | `200 OK` | Dynamic course catalog |
+| `https://cognova.com/admin/login` | GET | `200 OK` | Admin control portal |

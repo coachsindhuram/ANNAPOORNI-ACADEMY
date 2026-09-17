@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { Menu, X, BookOpen, Instagram, Youtube, Linkedin, Facebook, Twitter, Send, ArrowRight } from 'lucide-react';
@@ -6,16 +6,37 @@ import { Menu, X, BookOpen, Instagram, Youtube, Linkedin, Facebook, Twitter, Sen
 export const Navbar = () => {
   const { settings, navigation, socialLinks } = useSiteSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   const getSocialIcon = (platform) => {
     const p = platform.toLowerCase();
-    if (p.includes('instagram')) return <Instagram size={18} />;
-    if (p.includes('youtube')) return <Youtube size={18} />;
-    if (p.includes('linkedin')) return <Linkedin size={18} />;
-    if (p.includes('facebook')) return <Facebook size={18} />;
-    if (p.includes('twitter') || p.includes('x')) return <Twitter size={18} />;
-    return <Send size={18} />;
+    if (p.includes('instagram')) return <Instagram size={17} />;
+    if (p.includes('youtube')) return <Youtube size={17} />;
+    if (p.includes('linkedin')) return <Linkedin size={17} />;
+    if (p.includes('facebook')) return <Facebook size={17} />;
+    if (p.includes('twitter') || p.includes('x')) return <Twitter size={17} />;
+    return <Send size={17} />;
   };
 
   const headerNav = navigation.length > 0 ? navigation.filter(i => i.is_enabled && (i.location === 'header' || i.location === 'both')) : [
@@ -30,58 +51,75 @@ export const Navbar = () => {
   const headerSocials = socialLinks.filter(s => s.is_enabled && s.show_in_header);
 
   return (
-    <header className="header-navbar">
+    <header className={`header-navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="container header-container">
-        <Link to="/" className="brand-logo">
+        <Link to="/" className="brand-logo" aria-label="Cognova Home">
           {settings.logo_url ? (
             <img src={settings.logo_url} alt={settings.site_name} />
           ) : (
-            <div style={{ background: 'var(--primary-color)', color: '#fff', padding: '6px 10px', borderRadius: '8px', display: 'flex' }}>
-              <BookOpen size={24} />
+            <div style={{
+              background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))',
+              color: '#ffffff',
+              padding: '8px 10px',
+              borderRadius: 'var(--radius-md)',
+              display: 'flex',
+              alignItems: 'center',
+              boxShadow: '0 4px 12px rgba(85, 43, 122, 0.25)'
+            }}>
+              <BookOpen size={22} />
             </div>
           )}
-          <span>{settings.site_name || 'Annapoorni Academy'}</span>
+          <span style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
+            {settings.site_name || 'Cognova'}
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <ul className={`nav-links ${mobileOpen ? 'mobile-open' : ''}`}>
-          {headerNav.map((item) => {
-            const isActive = location.pathname === item.destination;
-            return (
-              <li key={item.id}>
-                {item.is_external ? (
-                  <a href={item.destination} target="_blank" rel="noopener noreferrer" className="nav-link">
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    to={item.destination}
-                    className={`nav-link ${isActive ? 'active' : ''}`}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                )}
+        <nav aria-label="Main Navigation">
+          <ul className={`nav-links ${mobileOpen ? 'mobile-open' : ''}`}>
+            {headerNav.map((item) => {
+              const isActive = location.pathname === item.destination;
+              return (
+                <li key={item.id}>
+                  {item.is_external ? (
+                    <a 
+                      href={item.destination} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="nav-link"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={item.destination}
+                      className={`nav-link ${isActive ? 'active' : ''}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+            {mobileOpen && (
+              <li style={{ marginTop: 'var(--space-4)', width: '100%' }}>
+                <Link
+                  to="/contact"
+                  className="btn btn-primary"
+                  onClick={() => setMobileOpen(false)}
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  Enquire Now <ArrowRight size={16} />
+                </Link>
               </li>
-            );
-          })}
-          {mobileOpen && (
-            <li style={{ marginTop: '0.5rem' }}>
-              <Link
-                to="/contact"
-                className="btn btn-primary btn-sm"
-                onClick={() => setMobileOpen(false)}
-                style={{ width: '100%', justifyContent: 'center' }}
-              >
-                Enquire Now
-              </Link>
-            </li>
-          )}
-        </ul>
+            )}
+          </ul>
+        </nav>
 
         {/* Header Social Icons & Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="header-social-group" style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <div className="header-social-group" style={{ display: 'flex', gap: 'var(--space-2)' }}>
             {headerSocials.map((soc) => (
               <a
                 key={soc.id}
@@ -90,7 +128,7 @@ export const Navbar = () => {
                 rel="noopener noreferrer"
                 className="social-icon-btn"
                 title={soc.platform}
-                style={{ width: '34px', height: '34px', color: 'var(--text-color)' }}
+                aria-label={soc.platform}
               >
                 {getSocialIcon(soc.platform)}
               </a>
@@ -100,18 +138,18 @@ export const Navbar = () => {
           <Link
             to="/contact"
             className="btn btn-primary btn-sm header-cta-btn"
-            style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}
           >
-            Enquire Now <ArrowRight size={14} />
+            Enquire Now <ArrowRight size={15} />
           </Link>
 
           {/* Mobile Menu Toggle */}
           <button
             className="mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle navigation menu"
+            aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileOpen}
           >
-            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>

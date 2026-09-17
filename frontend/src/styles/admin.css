@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ANNAPOORNI ACADEMY — ADMIN PANEL STYLES & LAYOUT
+   COGNOVA — ADMIN PANEL STYLES & LAYOUT
    ========================================================================== */
 
 .admin-wrapper {
@@ -75,7 +75,7 @@
 }
 
 .admin-menu-item a.active {
-  background-color: #1E3A8A;
+  background-color: #552B7A;
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -137,7 +137,7 @@
   align-items: center;
   justify-content: center;
   background-color: #EFF6FF;
-  color: #1E3A8A;
+  color: #552B7A;
 }
 
 .metric-info h3 {

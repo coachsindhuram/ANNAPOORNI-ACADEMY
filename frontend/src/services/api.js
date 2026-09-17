@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Default to relative paths for single-domain production Cloud Run deployment (annapoorniacademy.com)
+// Default to relative paths for single-domain production Cloud Run deployment (cognova.com)
 // If VITE_API_BASE_URL is explicitly set during dev/external hosting, it will use that base URL.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 

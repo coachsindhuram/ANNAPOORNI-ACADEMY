@@ -1,5 +1,5 @@
 """
-Firestore Service for Annapoorni Academy V2.0
+Firestore Service for Cognova V2.0
 Provides native document collection mapping and data operations for Google Cloud Firestore.
 """
 

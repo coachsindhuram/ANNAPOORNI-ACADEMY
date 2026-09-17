@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { BookOpen, Mail, Phone, MapPin, MessageCircle, Instagram, Youtube, Linkedin, Facebook, Twitter, Send } from 'lucide-react';
 
+import { AcademyLocationCard } from './AcademyLocationCard';
+
 export const Footer = () => {
   const { settings, navigation, socialLinks, contactInfo } = useSiteSettings();
 
@@ -44,9 +46,9 @@ export const Footer = () => {
                   <BookOpen size={24} />
                 </div>
               )}
-              <span>{settings.site_name || 'Annapoorni Academy'}</span>
+              <span>{settings.site_name || 'Cognova'}</span>
             </Link>
-            <p>{settings.site_description || 'Annapoorni Academy is a premier educational platform providing Vedic Mathematics, Memory Coaching, and Speed Reading with Coach Sindhu Ram.'}</p>
+            <p>{settings.site_description || 'Cognova is a premium educational platform providing world-class courses, subjects, lessons, and interactive learning assessments focusing on cognitive growth.'}</p>
             
             {/* Social Media Icons */}
             <div className="social-icons-wrapper">
@@ -85,11 +87,11 @@ export const Footer = () => {
           <div>
             <h4>Coaching Programs</h4>
             <ul className="footer-links">
-              <li><Link to="/courses">Vedic Mathematics</Link></li>
-              <li><Link to="/courses">Memory Training</Link></li>
-              <li><Link to="/courses">Speed Reading</Link></li>
-              <li><Link to="/announcements">Competitions & News</Link></li>
-              <li><Link to="/about">About Coach Sindhu Ram</Link></li>
+              <li><Link to="/courses">Courses</Link></li>
+              <li><Link to="/courses">Subjects</Link></li>
+              <li><Link to="/courses">Assessments</Link></li>
+              <li><Link to="/announcements">Announcements</Link></li>
+              <li><Link to="/about">About Cognova</Link></li>
             </ul>
           </div>
 
@@ -97,12 +99,10 @@ export const Footer = () => {
           <div>
             <h4>Contact Details</h4>
             <ul className="footer-links" style={{ gap: '0.85rem' }}>
-              {contactInfo.address && (
-                <li style={{ display: 'flex', gap: '0.6rem', color: 'var(--gray-300)', fontSize: '0.9rem' }}>
-                  <MapPin size={20} style={{ color: 'var(--accent-color)', flexShrink: 0 }} />
-                  <span>{contactInfo.address}</span>
-                </li>
-              )}
+              {/* Interactive Location Destination */}
+              <li>
+                <AcademyLocationCard variant="footer" />
+              </li>
               {contactInfo.email && (
                 <li style={{ display: 'flex', gap: '0.6rem', color: 'var(--gray-300)', fontSize: '0.9rem' }}>
                   <Mail size={18} style={{ color: 'var(--accent-color)', flexShrink: 0 }} />
@@ -133,7 +133,7 @@ export const Footer = () => {
         {/* Footer Bottom */}
         <div className="footer-bottom">
           <div>
-            © {new Date().getFullYear()} {settings.site_name || 'Annapoorni Academy'}. All rights reserved.
+            © {new Date().getFullYear()} {settings.site_name || 'Cognova'}. All rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <Link to="/about" style={{ color: 'var(--gray-400)' }}>Privacy Policy</Link>

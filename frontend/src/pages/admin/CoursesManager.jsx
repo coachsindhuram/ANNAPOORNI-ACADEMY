@@ -16,7 +16,12 @@ export const CoursesManager = () => {
   const [formData, setFormData] = useState({
     title: '', description: '', thumbnail_url: '', category: 'General',
     subject_id: '', difficulty: 'Beginner', duration: '4 Weeks',
-    status: 'published', is_featured: false, display_order: 1
+    status: 'published', is_featured: false, display_order: 1,
+    age_group: 'Age 8-16 / All Ages',
+    prerequisites: 'Basic arithmetic knowledge',
+    learning_outcomes_text: '',
+    skills_developed_text: '',
+    faqs_text: ''
   });
 
   const [mediaModalOpen, setMediaModalOpen] = useState(false);
@@ -48,25 +53,66 @@ export const CoursesManager = () => {
     setFormData({
       title: '', description: '', thumbnail_url: '', category: 'General',
       subject_id: subjects[0]?.id || '', difficulty: 'Beginner', duration: '4 Weeks',
-      status: 'published', is_featured: false, display_order: courses.length + 1
+      status: 'published', is_featured: false, display_order: courses.length + 1,
+      age_group: 'Age 8-16 / All Ages',
+      prerequisites: 'Basic arithmetic knowledge',
+      learning_outcomes_text: 'Master mental calculation techniques\nBoost academic problem-solving speed\nDevelop strong analytical confidence',
+      skills_developed_text: 'Mental Maths, Concentration, Speed, Accuracy',
+      faqs_text: JSON.stringify([
+        { question: 'Who is this course suitable for?', answer: 'Designed for students from grades 3 to 12 as well as competitive exam aspirants.' },
+        { question: 'Are live Zoom recordings provided?', answer: 'Yes, full session recordings and study sheets are provided after each class.' }
+      ], null, 2)
     });
     setModalOpen(true);
   };
 
   const handleOpenEdit = (course) => {
     setEditingCourse(course);
-    setFormData({ ...course, subject_id: course.subject_id || '' });
+    setFormData({
+      ...course,
+      subject_id: course.subject_id || '',
+      age_group: course.age_group || '',
+      prerequisites: course.prerequisites || '',
+      learning_outcomes_text: Array.isArray(course.learning_outcomes) ? course.learning_outcomes.join('\n') : '',
+      skills_developed_text: Array.isArray(course.skills_developed) ? course.skills_developed.join(', ') : '',
+      faqs_text: course.faqs ? JSON.stringify(course.faqs, null, 2) : ''
+    });
     setModalOpen(true);
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
+      const outcomes = formData.learning_outcomes_text
+        ? formData.learning_outcomes_text.split('\n').map(s => s.trim()).filter(Boolean)
+        : [];
+      
+      const skills = formData.skills_developed_text
+        ? formData.skills_developed_text.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
+      let parsedFaqs = [];
+      if (formData.faqs_text && formData.faqs_text.trim()) {
+        try {
+          parsedFaqs = JSON.parse(formData.faqs_text);
+        } catch (jsonErr) {
+          alert('FAQs must be valid JSON array of objects with "question" and "answer" properties.');
+          return;
+        }
+      }
+
+      const payload = {
+        ...formData,
+        learning_outcomes: outcomes,
+        skills_developed: skills,
+        faqs: parsedFaqs
+      };
+
       if (editingCourse) {
-        await API.put(`/api/admin/courses/${editingCourse.id}`, formData);
+        await API.put(`/api/admin/courses/${editingCourse.id}`, payload);
         setToastMsg('Course updated successfully!');
       } else {
-        await API.post('/api/admin/courses', formData);
+        await API.post('/api/admin/courses', payload);
         setToastMsg('New course published!');
       }
       setModalOpen(false);
@@ -115,6 +161,7 @@ export const CoursesManager = () => {
               <th>Course Title</th>
               <th>Category / Subject</th>
               <th>Difficulty</th>
+              <th>Age Group</th>
               <th>Lessons</th>
               <th>Status</th>
               <th>Featured</th>
@@ -134,6 +181,7 @@ export const CoursesManager = () => {
                 <td style={{ fontWeight: 700 }}>{c.title}</td>
                 <td>{c.category} {c.subject_name ? `(${c.subject_name})` : ''}</td>
                 <td>{c.difficulty}</td>
+                <td style={{ fontSize: '0.85rem', color: '#64748B' }}>{c.age_group || 'All Ages'}</td>
                 <td>{c.lesson_count || 0} Lessons</td>
                 <td>
                   <span className={`badge ${c.status === 'published' ? 'badge-published' : 'badge-draft'}`}>
@@ -162,7 +210,7 @@ export const CoursesManager = () => {
       {/* Modal */}
       {modalOpen && (
         <div className="modal-overlay">
-          <div className="modal-container" style={{ maxWidth: '650px' }}>
+          <div className="modal-container" style={{ maxWidth: '750px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="modal-header">
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>
                 {editingCourse ? 'Edit Course' : 'Create New Course'}
@@ -171,12 +219,12 @@ export const CoursesManager = () => {
             <form onSubmit={handleSave}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Course Title</label>
+                  <label className="form-label">Course Title *</label>
                   <input
                     type="text"
                     required
                     className="form-control"
-                    placeholder="e.g. Foundations of Python Programming"
+                    placeholder="e.g. Vedic Maths Speed Calculation Mastery"
                     value={formData.title}
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                   />
@@ -234,11 +282,67 @@ export const CoursesManager = () => {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="e.g. 4 Weeks"
+                      placeholder="e.g. 6 Weeks (12 Live Sessions)"
                       value={formData.duration || ''}
                       onChange={e => setFormData({ ...formData, duration: e.target.value })}
                     />
                   </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Target Age Group</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="e.g. Age 8-16 / Grade 4-10"
+                      value={formData.age_group || ''}
+                      onChange={e => setFormData({ ...formData, age_group: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Prerequisites</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="e.g. Basic addition & multiplication tables (1 to 9)"
+                      value={formData.prerequisites || ''}
+                      onChange={e => setFormData({ ...formData, prerequisites: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Learning Outcomes (1 outcome per line)</label>
+                  <textarea
+                    rows="3"
+                    className="form-control"
+                    placeholder="Multiply any 2 or 3 digit numbers mentally&#10;Calculate square roots and cube roots in seconds&#10;Eliminate scratchpad calculations completely"
+                    value={formData.learning_outcomes_text}
+                    onChange={e => setFormData({ ...formData, learning_outcomes_text: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Skills Developed (Comma separated)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Mental Maths, Speed Calculation, Focus, Memory Retention"
+                    value={formData.skills_developed_text}
+                    onChange={e => setFormData({ ...formData, skills_developed_text: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Course FAQs (JSON format)</label>
+                  <textarea
+                    rows="3"
+                    className="form-control"
+                    style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}
+                    placeholder='[{"question": "What is the class schedule?", "answer": "Classes run on Saturdays & Sundays via Zoom."}]'
+                    value={formData.faqs_text}
+                    onChange={e => setFormData({ ...formData, faqs_text: e.target.value })}
+                  />
                 </div>
 
                 <div className="form-group">

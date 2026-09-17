@@ -1,8 +1,8 @@
-# Annapoorni Academy V1.0 — Architecture Overview
+# Cognova V1.0 — Architecture Overview
 
 ## 1. System High-Level Architecture
 
-Annapoorni Academy V1.0 is built on a modular full-stack decoupled architecture.
+Cognova V1.0 is built on a modular full-stack decoupled architecture.
 
 ```text
 ┌─────────────────────────────────────────────────────────┐

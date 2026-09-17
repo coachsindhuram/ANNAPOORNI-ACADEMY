@@ -1,53 +1,79 @@
 import React, { useState } from 'react';
 import { useSiteSettings } from '../../context/SiteSettingsContext';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageCircle } from 'lucide-react';
+import { Mail, Phone, Clock, Send, CheckCircle2, MessageCircle } from 'lucide-react';
+import { AcademyLocationCard } from '../../components/AcademyLocationCard';
 import API from '../../services/api';
 
 export const Contact = () => {
-  const { contactInfo, socialLinks } = useSiteSettings();
+  const { contactInfo, socialLinks, academyLocation } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
     mode: 'Live Online via Zoom',
     subject: '',
-    message: ''
+    message: '',
+    website_url: '' // Anti-spam honeypot field
   });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
-  const whatsappNum = (contactInfo?.whatsapp || contactInfo?.phone || '+919080385589').replace(/[^0-9]/g, '');
-  const displayPhone = contactInfo?.phone || '+91 90803 85589';
-  const displayEmail = contactInfo?.email || 'coach.sindhuram@gmail.com';
+  const quickTopics = [
+    'Vedic Maths Batch Inquiry',
+    'Memory Coaching Workshop',
+    'Speed Reading Program',
+    'Competition Practice & Olympiad',
+    'Teacher Training / School Seminar',
+    'Offline Classroom Coaching'
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.message.trim()) {
+    setError('');
+
+    // Honeypot bot protection
+    if (formData.website_url) {
+      setSubmitted(true);
+      return;
+    }
+
+    if (!formData.name || !formData.phone || !formData.email || !formData.message) {
       setError('Please provide your name, phone number, email address, and message.');
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      await API.post('/api/contact/inquiry', formData);
+      await API.post('/api/contact/inquiry', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        mode: formData.mode,
+        subject: formData.subject || 'General Inquiry',
+        message: formData.message
+      });
+
       setSubmitted(true);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to submit inquiry. Please try again or reach out on WhatsApp.');
+      setError(err.response?.data?.error || 'Failed to submit your message. Please reach us via WhatsApp or Phone directly.');
     } finally {
       setLoading(false);
     }
   };
 
+  const displayEmail = contactInfo.email || 'coach.sindhuram@gmail.com';
+  const displayPhone = contactInfo.phone || '+91 90803 85589';
+  const whatsappNum = (contactInfo.whatsapp || contactInfo.phone || '+919080385589').replace(/[^0-9]/g, '');
   const contactSocials = socialLinks.filter(s => s.is_enabled && s.show_in_contact);
 
   return (
     <div>
-      <section style={{ background: 'var(--primary-color)', color: '#FFFFFF', padding: '4rem 0', textAlign: 'center' }}>
-        <div className="container" style={{ maxWidth: '750px' }}>
-          <h1 style={{ fontSize: '2.5rem', color: '#FFFFFF', marginBottom: '1rem' }}>Contact Annapoorni Academy</h1>
-          <p style={{ fontSize: '1.15rem', opacity: 0.9 }}>
+      {/* Contact Header Section */}
+      <section className="page-header">
+        <div className="container">
+          <h1>Contact Coach Sindhu Ram</h1>
+          <p style={{ maxWidth: '650px', margin: '1rem auto 0', color: 'var(--gray-300)', fontSize: '1.1rem' }}>
             Have questions about Vedic Maths, Memory Coaching, or Speed Reading? Connect directly with Coach Sindhu Ram.
           </p>
         </div>
@@ -59,18 +85,9 @@ export const Contact = () => {
           <div>
             <h2 style={{ fontSize: '1.75rem', marginBottom: '1.5rem' }}>Get in Touch</h2>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem' }}>
-              {contactInfo.address && (
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(30, 58, 138, 0.08)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <MapPin size={22} />
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Campus Address</h4>
-                    <p style={{ color: 'var(--gray-600)', fontSize: '0.95rem', marginTop: '0.2rem' }}>{contactInfo.address}</p>
-                  </div>
-                </div>
-              )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2.5rem' }}>
+              {/* Interactive Academy Campus Address Block */}
+              <AcademyLocationCard variant="compact" />
 
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
                 <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(30, 58, 138, 0.08)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -143,39 +160,8 @@ export const Contact = () => {
               </div>
             )}
 
-            {/* Google Maps Location Section */}
-            <div className="glass-card" style={{ padding: '1.5rem', borderRadius: '16px', background: '#FFFFFF' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
-                <MapPin size={22} style={{ color: 'var(--primary-color)' }} />
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Campus & Class Location</h4>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', margin: 0 }}>Annapoorni Academy — Coach Sindhu Ram</p>
-                </div>
-              </div>
-
-              <div style={{ borderRadius: '12px', overflow: 'hidden', height: '220px', background: 'var(--gray-100)', marginBottom: '1rem' }}>
-                <iframe
-                  title="Annapoorni Academy Google Maps"
-                  src={contactInfo.maps_embed_url || "https://maps.google.com/maps?q=Annapoorni%20Academy%20Coach%20Sindhu%20Ram&t=&z=15&ie=UTF8&iwloc=&output=embed"}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-
-              <a
-                href={contactInfo.maps_embed_url || "https://maps.google.com/maps?q=Annapoorni%20Academy%20Coach%20Sindhu%20Ram"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-outline"
-                style={{ width: '100%', textAlign: 'center', justifyContent: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 700 }}
-              >
-                📍 Open Location in Google Maps
-              </a>
-            </div>
+            {/* Interactive Location & Maps Card with Live Route Simulation */}
+            <AcademyLocationCard variant="card" showEmbed={true} />
           </div>
 
           {/* Contact Form Box */}
@@ -271,6 +257,28 @@ export const Contact = () => {
 
                 <div className="form-group">
                   <label className="form-label">Subject / Program *</label>
+                  {/* Quick topic buttons */}
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.6rem' }}>
+                    {quickTopics.map((topic) => (
+                      <button
+                        key={topic}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, subject: topic })}
+                        className="badge"
+                        style={{
+                          background: formData.subject === topic ? 'var(--primary-color)' : 'var(--gray-100)',
+                          color: formData.subject === topic ? '#FFFFFF' : 'var(--gray-700)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '4px 10px',
+                          fontSize: '0.75rem',
+                          borderRadius: '12px'
+                        }}
+                      >
+                        {topic}
+                      </button>
+                    ))}
+                  </div>
                   <input
                     type="text"
                     required
@@ -278,6 +286,20 @@ export const Contact = () => {
                     placeholder="e.g. Vedic Maths Zoom Batch Schedule"
                     value={formData.subject}
                     onChange={e => setFormData({ ...formData, subject: e.target.value })}
+                  />
+                </div>
+
+                {/* Anti-Spam Honeypot Field (Hidden from humans) */}
+                <div style={{ display: 'none', visibility: 'hidden', position: 'absolute', left: '-9999px' }} aria-hidden="true">
+                  <label htmlFor="website_url">Leave this field blank</label>
+                  <input
+                    type="text"
+                    id="website_url"
+                    name="website_url"
+                    tabIndex="-1"
+                    autoComplete="off"
+                    value={formData.website_url}
+                    onChange={e => setFormData({ ...formData, website_url: e.target.value })}
                   />
                 </div>
 

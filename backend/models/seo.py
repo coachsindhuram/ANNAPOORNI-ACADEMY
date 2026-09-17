@@ -5,10 +5,10 @@ class SeoSetting(db.Model):
     __tablename__ = 'seo_settings'
 
     id = db.Column(db.Integer, primary_key=True)
-    site_title = db.Column(db.String(255), default='Annapoorni Academy — Premier Educational Platform')
-    meta_description = db.Column(db.Text, default='Discover structured courses, subjects, lessons, and interactive assessments at Annapoorni Academy.')
-    keywords = db.Column(db.Text, default='education, online courses, learning platform, academy, lessons, quizzes, annapoorni')
-    og_title = db.Column(db.String(255), default='Annapoorni Academy — Learn Better. Grow Smarter.')
+    site_title = db.Column(db.String(255), default='Cognova — Think Better. Learn Faster. Grow Smarter.')
+    meta_description = db.Column(db.Text, default='Discover structured courses, subjects, lessons, and interactive assessments at Cognova.')
+    keywords = db.Column(db.Text, default='education, online courses, learning platform, academy, lessons, quizzes, cognova')
+    og_title = db.Column(db.String(255), default='Cognova — Think Better. Learn Faster. Grow Smarter.')
     og_description = db.Column(db.Text, default='Empowering students with modern structured learning resources and interactive assessments.')
     og_image = db.Column(db.String(500), nullable=True)
     favicon_url = db.Column(db.String(500), nullable=True)

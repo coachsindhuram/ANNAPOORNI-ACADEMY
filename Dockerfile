@@ -1,5 +1,5 @@
 # ==============================================================================
-# Annapoorni Academy V2.0 — Production Single-Domain Dockerfile
+# Cognova V2.0 — Production Single-Domain Dockerfile
 # Serves both React SPA and Flask REST API from a single Google Cloud Run service
 # ==============================================================================
 

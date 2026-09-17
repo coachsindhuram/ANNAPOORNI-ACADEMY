@@ -1,0 +1,1 @@
+﻿import React from 'react'; export default function CourseGrid(props) { return <div className='grid grid-cols-1 md:grid-cols-3 gap-6'><div className='p-4 border rounded'>Course 1</div><div className='p-4 border rounded'>Course 2</div></div>; }

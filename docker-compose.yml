@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: annapoorni_unified_app
+    container_name: Cognova_unified_app
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -15,7 +15,7 @@ services:
       PORT: 8080
       SECRET_KEY: dev-local-secret-key-2026
       JWT_SECRET_KEY: dev-local-jwt-secret-2026
-      DATABASE_URL: sqlite:////app/annapoorni.db
+      DATABASE_URL: sqlite:////app/Cognova.db
       FRONTEND_URL: http://localhost:8080
     volumes:
       - app_data:/app/uploads

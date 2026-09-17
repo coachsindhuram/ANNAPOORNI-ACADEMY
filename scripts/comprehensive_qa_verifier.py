@@ -34,7 +34,7 @@ def run_comprehensive_qa():
     warnings = []
 
     print("=" * 60)
-    print("ANNAPOORNI ACADEMY V2.0 — COMPREHENSIVE QA & VERIFICATION")
+    print("Cognova V2.0 — COMPREHENSIVE QA & VERIFICATION")
     print("=" * 60)
 
     # -------------------------------------------------------------

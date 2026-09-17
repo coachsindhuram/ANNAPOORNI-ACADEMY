@@ -7,9 +7,13 @@ load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'annapoorni-secret-key-v2-production-2026')
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'annapoorni-jwt-secret-key-v2-production-2026')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'Cognova-secret-key-v2-production-2026')
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'Cognova-jwt-secret-key-v2-production-2026')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=int(os.environ.get('JWT_ACCESS_TOKEN_EXPIRES_DAYS', 7)))
+
+    if os.environ.get('FLASK_ENV') == 'production':
+        if SECRET_KEY == 'Cognova-secret-key-v2-production-2026' or JWT_SECRET_KEY == 'Cognova-jwt-secret-key-v2-production-2026':
+            raise ValueError("SECRET_KEY and JWT_SECRET_KEY environment variables are required in production environment.")
 
     # Database Mode: 'sqlite', 'mysql', or 'firestore'
     DB_TYPE = os.environ.get('DB_TYPE', 'auto').lower()
@@ -22,7 +26,10 @@ class Config:
     if db_url and db_url.startswith('mysql://'):
         db_url = db_url.replace('mysql://', 'mysql+pymysql://', 1)
 
-    SQLALCHEMY_DATABASE_URI = db_url or f"sqlite:///{os.path.join(os.path.dirname(__file__), 'annapoorni.db')}"
+    if os.environ.get('FLASK_ENV') == 'production' and not db_url:
+        raise ValueError("DATABASE_URL is required in production environment. Do not fallback to SQLite.")
+
+    SQLALCHEMY_DATABASE_URI = db_url or f"sqlite:///{os.path.join(os.path.dirname(__file__), 'Cognova.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Upload & Media configurations

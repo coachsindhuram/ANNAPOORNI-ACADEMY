@@ -10,7 +10,6 @@ from routes.auth import auth_bp
 from routes.public import public_bp
 from routes.admin_settings import admin_settings_bp
 from routes.admin_theme import admin_theme_bp
-from routes.admin_homepage import admin_homepage_bp
 from routes.admin_navigation import admin_nav_bp
 from routes.admin_social import admin_social_bp
 from routes.admin_courses import admin_courses_bp
@@ -24,6 +23,7 @@ from routes.admin_contact import admin_contact_bp
 from routes.admin_dashboard import admin_dashboard_bp
 from routes.admin_enrollments import admin_enrollments_bp
 from routes.admin_backup import admin_backup_bp
+from routes.admin_pages import admin_pages_bp
 
 def create_app(config_name=None):
     if config_name is None:
@@ -35,8 +35,8 @@ def create_app(config_name=None):
     # Configure CORS origins based on FRONTEND_URL or allow local dev origins
     frontend_env = os.environ.get('FRONTEND_URL', '')
     allowed_origins = [
-        'https://annapoorniacademy.com',
-        'https://www.annapoorniacademy.com',
+        'https://cognova.com',
+        'https://www.cognova.com',
         'http://localhost:5173',
         'http://127.0.0.1:5173',
         'http://localhost:5000',
@@ -69,6 +69,8 @@ def create_app(config_name=None):
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        if os.environ.get('FLASK_ENV') == 'production':
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         return response
 
     # Register Blueprints
@@ -76,7 +78,6 @@ def create_app(config_name=None):
     app.register_blueprint(public_bp)
     app.register_blueprint(admin_settings_bp)
     app.register_blueprint(admin_theme_bp)
-    app.register_blueprint(admin_homepage_bp)
     app.register_blueprint(admin_nav_bp)
     app.register_blueprint(admin_social_bp)
     app.register_blueprint(admin_courses_bp)
@@ -90,6 +91,7 @@ def create_app(config_name=None):
     app.register_blueprint(admin_dashboard_bp)
     app.register_blueprint(admin_enrollments_bp)
     app.register_blueprint(admin_backup_bp)
+    app.register_blueprint(admin_pages_bp)
 
     # Serve uploaded media files
     @app.route('/uploads/<path:filename>')
@@ -103,7 +105,7 @@ def create_app(config_name=None):
         return jsonify({
             'status': 'healthy',
             'version': '2.0.0',
-            'service': 'Annapoorni Academy Production Service'
+            'service': 'Cognova Production Service'
         }), 200
 
     # Dynamic SEO: robots.txt
@@ -114,14 +116,14 @@ Allow: /
 Disallow: /admin
 Disallow: /api/admin
 
-Sitemap: https://annapoorniacademy.com/sitemap.xml
+Sitemap: https://cognova.com/sitemap.xml
 """
         return Response(content, mimetype='text/plain')
 
     # Dynamic SEO: sitemap.xml
     @app.route('/sitemap.xml', methods=['GET'])
     def sitemap_xml():
-        base_url = "https://annapoorniacademy.com"
+        base_url = "https://cognova.com"
         urls = [
             f"<url><loc>{base_url}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>",
             f"<url><loc>{base_url}/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>",
@@ -162,7 +164,7 @@ Sitemap: https://annapoorniacademy.com/sitemap.xml
             index_path = os.path.join(static_folder, 'index.html')
             if os.path.exists(index_path):
                 return send_from_directory(static_folder, 'index.html')
-            return jsonify({'message': 'Annapoorni Academy API is live. Frontend build pending.'}), 200
+            return jsonify({'message': 'Cognova API is live. Frontend build pending.'}), 200
 
     # Auto-create tables and seed database
     with app.app_context():

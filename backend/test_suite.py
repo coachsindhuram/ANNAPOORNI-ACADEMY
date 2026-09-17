@@ -15,7 +15,7 @@ from models.inquiry import ContactInquiry
 from models.enrollment import Enrollment
 from services.email_service import _get_email_config, send_email, send_contact_inquiry_emails, send_enrollment_emails
 
-class AnnapoorniAcademyTestSuite(unittest.TestCase):
+class cognovaTestSuite(unittest.TestCase):
     def setUp(self):
         self.app = app
         self.client = self.app.test_client()
@@ -294,5 +294,140 @@ class AnnapoorniAcademyTestSuite(unittest.TestCase):
         self.assertEqual(bk_res.status_code, 200)
         self.assertEqual(bk_res.get_json()['version'], '2.0.0')
 
+    def test_15_course_slug_and_extended_metadata(self):
+        """Test 15: Course detail lookup by slug, extended metadata fields, and related courses"""
+        res = self.client.get('/api/courses/vedic-maths-speed-calculation-mastery')
+        self.assertEqual(res.status_code, 200, "Should resolve course by slug")
+        data = res.get_json()
+        self.assertEqual(data['slug'], 'vedic-maths-speed-calculation-mastery')
+        self.assertIn('learning_outcomes', data)
+        self.assertIn('skills_developed', data)
+        self.assertIn('faqs', data)
+        self.assertIn('related_courses', data)
+        self.assertIsInstance(data['learning_outcomes'], list)
+        self.assertIsInstance(data['skills_developed'], list)
+        self.assertIsInstance(data['faqs'], list)
+
+    def test_16_admin_change_password(self):
+        """Test 16: Admin password update and authentication validation"""
+        token = self._get_admin_token()
+        # Change password
+        chg_res = self.client.post('/api/admin/change-password', json={
+            'current_password': '$12345678',
+            'new_password': '$UpdatedPassword2026'
+        }, headers={'Authorization': f'Bearer {token}'}, content_type='application/json')
+        self.assertEqual(chg_res.status_code, 200)
+
+        # Verify login with new password
+        login_new = self.client.post('/api/admin/login', json={
+            'username': 'admin',
+            'password': '$UpdatedPassword2026'
+        }, content_type='application/json')
+        self.assertEqual(login_new.status_code, 200)
+        new_token = login_new.get_json()['token']
+
+        # Revert back to original password for other tests
+        revert_res = self.client.post('/api/admin/change-password', json={
+            'current_password': '$UpdatedPassword2026',
+            'new_password': '$12345678'
+        }, headers={'Authorization': f'Bearer {new_token}'}, content_type='application/json')
+        self.assertEqual(revert_res.status_code, 200)
+
+    def test_17_honeypot_spam_protection(self):
+        """Test 17: Honeypot field traps bot submissions safely without database creation"""
+        res = self.client.post('/api/contact/inquiry', json={
+            'name': 'Spam Bot',
+            'email': 'spambot@spam.com',
+            'phone': '1234567890',
+            'message': 'Buy our products now',
+            'website_url': 'http://spamsite.com'
+        }, content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        # Should not save spambot email in database
+        spam_in_db = ContactInquiry.query.filter_by(email='spambot@spam.com').first()
+        self.assertIsNone(spam_in_db, "Honeypot submission must not be persisted")
+
+    # =========================================================================
+    # 6. Centralized Location & Maps Integration Tests
+    # =========================================================================
+
+    def test_18_website_settings_location_crud(self):
+        """Test 18: Admin can update centralized academy location and retrieve structured academy_location"""
+        token = self._get_admin_token()
+
+        update_payload = {
+            'location_name': 'Cognova HQ',
+            'address': '123 Vedic Knowledge Park, Coimbatore, Tamil Nadu, India',
+            'latitude': '11.0168445',
+            'longitude': '76.9558321',
+            'google_maps_url': 'https://www.google.com/maps/search/?api=1&query=11.0168445,76.9558321',
+            'apple_maps_url': 'https://maps.apple.com/?q=Cognova%20Academy%20HQ&ll=11.0168445,76.9558321',
+            'maps_embed_url': 'https://maps.google.com/maps?q=Cognova%20Academy&output=embed'
+        }
+
+        # 1. Update website settings
+        put_res = self.client.put(
+            '/api/admin/website/settings',
+            json=update_payload,
+            headers={'Authorization': f'Bearer {token}'},
+            content_type='application/json'
+        )
+        self.assertEqual(put_res.status_code, 200, "Should update website settings successfully")
+
+        # 2. Public GET website settings
+        get_res = self.client.get('/api/website/settings')
+        self.assertEqual(get_res.status_code, 200)
+        data = get_res.get_json()
+
+        self.assertEqual(data['location_name'], 'Cognova HQ')
+        self.assertEqual(data['address'], '123 Vedic Knowledge Park, Coimbatore, Tamil Nadu, India')
+        self.assertEqual(data['latitude'], '11.0168445')
+        self.assertEqual(data['longitude'], '76.9558321')
+        self.assertEqual(data['google_maps_url'], 'https://www.google.com/maps/search/?api=1&query=11.0168445,76.9558321')
+        self.assertEqual(data['apple_maps_url'], 'https://maps.apple.com/?q=Cognova%20Academy%20HQ&ll=11.0168445,76.9558321')
+
+        # Verify structured academy_location object
+        self.assertIn('academy_location', data)
+        self.assertEqual(data['academy_location']['name'], 'Cognova HQ')
+        self.assertEqual(data['academy_location']['latitude'], '11.0168445')
+        self.assertEqual(data['academy_location']['longitude'], '76.9558321')
+
+    def test_19_contact_settings_location_sync(self):
+        """Test 19: Contact settings reflect synchronized location configuration"""
+        token = self._get_admin_token()
+
+        update_payload = {
+            'email': 'coach.sindhuram@gmail.com',
+            'phone': '+91 90803 85589',
+            'whatsapp': '+919080385589',
+            'location_name': 'Cognova Main Campus',
+            'address': 'Coach Sindhu Ram Academy, Coimbatore, Tamil Nadu, India',
+            'latitude': '11.0168445',
+            'longitude': '76.9558321',
+            'google_maps_url': 'https://www.google.com/maps/search/?api=1&query=11.0168445,76.9558321',
+            'apple_maps_url': 'https://maps.apple.com/?q=Cognova%20Academy&ll=11.0168445,76.9558321'
+        }
+
+        put_res = self.client.put(
+            '/api/admin/contact',
+            json=update_payload,
+            headers={'Authorization': f'Bearer {token}'},
+            content_type='application/json'
+        )
+        self.assertEqual(put_res.status_code, 200)
+
+        # Verify public GET /api/contact
+        get_res = self.client.get('/api/contact')
+        self.assertEqual(get_res.status_code, 200)
+        data = get_res.get_json()
+
+        self.assertEqual(data['location_name'], 'Cognova Main Campus')
+        self.assertEqual(data['latitude'], '11.0168445')
+        self.assertEqual(data['longitude'], '76.9558321')
+        self.assertIn('academy_location', data)
+        self.assertEqual(data['academy_location']['name'], 'Cognova Main Campus')
+
 if __name__ == '__main__':
     unittest.main()
+
+

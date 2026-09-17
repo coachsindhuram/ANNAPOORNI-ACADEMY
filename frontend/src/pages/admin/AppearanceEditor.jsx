@@ -28,16 +28,16 @@ export const AppearanceEditor = () => {
   }, [settings]);
 
   const presets = {
-    Academic: {
-      primary_color: '#1E3A8A',
-      secondary_color: '#0D9488',
-      accent_color: '#F59E0B',
-      background_color: '#F8FAFC',
-      text_color: '#0F172A',
+    'Cognova Default': {
+      primary_color: '#552B7A',
+      secondary_color: '#F2B84B',
+      accent_color: '#F2B84B',
+      background_color: '#FFF9EF',
+      text_color: '#24202A',
       card_color: '#FFFFFF',
-      button_color: '#1E3A8A',
+      button_color: '#552B7A',
       header_color: '#FFFFFF',
-      footer_color: '#0F172A',
+      footer_color: '#24202A',
       font_heading: 'Outfit',
       font_body: 'Inter'
     },

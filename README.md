@@ -1,8 +1,8 @@
-# 🎓 ANNAPOORNI ACADEMY V2.0
+# 🎓 Cognova V2.0
 > **Production Website, Admin CMS & Ultra-Low-Cost Google Cloud Deployment**  
-> **Production Domain:** `annapoorniacademy.com`
+> **Production Domain:** `cognova.com`
 
-Annapoorni Academy V2.0 is a production-ready educational website and centralized Admin Content Management System (CMS) featuring coaching programs in **Vedic Mathematics**, **Memory Training**, and **Speed Reading** by **Coach Sindhu Ram**.
+Cognova V2.0 is a production-ready educational website and centralized Admin Content Management System (CMS) featuring coaching programs in **Vedic Mathematics**, **Memory Training**, and **Speed Reading** by **Coach Sindhu Ram**.
 
 Designed for **ultra-low-cost hosting**, V2.0 runs as a **single-domain, scale-to-zero container on Google Cloud Run** backed by **Google Cloud Firestore (Free Tier)** and **Cloud Storage (Free Tier)** with expected recurring infrastructure operating costs approaching **₹0/month** within free quotas.
 
@@ -38,7 +38,7 @@ Designed for **ultra-low-cost hosting**, V2.0 runs as a **single-domain, scale-t
 - **Backend**: Python 3.11/3.12, Flask 3.0, Gunicorn WSGI, Flask-JWT-Extended, Werkzeug Security, Pillow (WebP optimization).
 - **Database**: 
   - **Production**: Google Cloud Firestore (Native mode, 1 GiB free tier).
-  - **Local Development / Offline**: SQLite zero-config fallback (`sqlite:///annapoorni.db`) or MySQL.
+  - **Local Development / Offline**: SQLite zero-config fallback (`sqlite:///Cognova.db`) or MySQL.
 - **Cloud Infrastructure**: Google Cloud Run (Scale-to-zero, dynamic `$PORT`), Google Cloud Storage, Google-managed SSL/HTTPS.
 
 ---
@@ -86,11 +86,11 @@ See the complete step-by-step deployment runbook in [docs/DEPLOYMENT_V2.md](docs
 ### Quick Deploy Summary:
 ```bash
 # 1. Build and push image to Google Cloud Build
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/annapoorni-web:v2.0
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/Cognova-web:v2.0
 
 # 2. Deploy single-domain container to Cloud Run (Scale-to-zero)
-gcloud run deploy annapoorni-web \
-    --image gcr.io/YOUR_PROJECT_ID/annapoorni-web:v2.0 \
+gcloud run deploy Cognova-web \
+    --image gcr.io/YOUR_PROJECT_ID/Cognova-web:v2.0 \
     --platform managed \
     --region asia-south1 \
     --allow-unauthenticated \
@@ -99,7 +99,7 @@ gcloud run deploy annapoorni-web \
     --concurrency 80
 
 # 3. Map custom domain
-gcloud beta run domain-mappings create --service annapoorni-web --domain annapoorniacademy.com
+gcloud beta run domain-mappings create --service Cognova-web --domain cognova.com
 ```
 
 ---

@@ -1,4 +1,4 @@
-# Annapoorni Academy V1.0 — REST API Specification
+# Cognova V1.0 — REST API Specification
 
 All endpoints return JSON responses and use standard HTTP status codes (`200 OK`, `201 Created`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`, `500 Server Error`).
 

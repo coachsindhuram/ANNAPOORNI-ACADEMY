@@ -32,7 +32,7 @@ export const AdminDashboard = () => {
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `annapoorni_academy_backup_${new Date().toISOString().slice(0,10)}.json`);
+      link.setAttribute('download', `Cognova_academy_backup_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(link);
       link.click();
       link.remove();

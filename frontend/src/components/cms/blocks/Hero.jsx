@@ -1,0 +1,1 @@
+﻿import React from 'react'; export default function Hero(props) { return <div className='py-20 text-center'><h1 className='text-4xl font-bold'>{props.title || 'Hero Title'}</h1><p className='mt-4'>{props.subtitle || 'Hero Subtitle'}</p></div>; }

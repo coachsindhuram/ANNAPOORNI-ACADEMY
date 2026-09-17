@@ -22,7 +22,7 @@ export const AdminSidebar = () => {
           <ShieldCheck size={24} />
         </div>
         <div>
-          <h2>Annapoorni</h2>
+          <h2>Cognova</h2>
           <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Admin Control Center</span>
         </div>
       </div>
@@ -51,9 +51,9 @@ export const AdminSidebar = () => {
               </NavLink>
             </li>
             <li className="admin-menu-item">
-              <NavLink to="/admin/homepage" className={({ isActive }) => (isActive ? 'active' : '')}>
+              <NavLink to="/admin/pages" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <Layout size={18} />
-                <span>Homepage Editor</span>
+                <span>Pages (Visual Builder)</span>
               </NavLink>
             </li>
             <li className="admin-menu-item">

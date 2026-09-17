@@ -19,7 +19,7 @@ export const AppearancePreview = ({ theme, settings }) => {
         <div className="preview-dot" style={{ background: '#F59E0B' }} />
         <div className="preview-dot" style={{ background: '#10B981' }} />
         <div style={{ flex: 1, background: '#FFFFFF', borderRadius: '4px', fontSize: '0.75rem', padding: '2px 10px', color: '#64748B', marginLeft: '10px' }}>
-          https://annapoorni.edu/ (Live Theme Preview)
+          https://Cognova.edu/ (Live Theme Preview)
         </div>
       </div>
 
@@ -27,7 +27,7 @@ export const AppearancePreview = ({ theme, settings }) => {
         {/* Mock Header */}
         <div style={{ background: headerBg, height: '56px', borderBottom: '1px solid #E2E8F0', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontWeight: 800, color: p, fontFamily: `'${headingFont}', sans-serif`, fontSize: '1.1rem' }}>
-            {settings?.site_name || 'Annapoorni Academy'}
+            {settings?.site_name || 'Cognova'}
           </div>
           <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', fontWeight: 600 }}>
             <span>Home</span>
@@ -84,7 +84,7 @@ export const AppearancePreview = ({ theme, settings }) => {
 
         {/* Mock Footer */}
         <div style={{ background: footerBg, color: '#F8FAFC', padding: '1.5rem 2rem', marginTop: 'auto', fontSize: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>© Annapoorni Academy. All rights reserved.</div>
+          <div>© Cognova. All rights reserved.</div>
           <div style={{ display: 'flex', gap: '1rem', color: a }}>
             <span>Instagram</span>
             <span>YouTube</span>

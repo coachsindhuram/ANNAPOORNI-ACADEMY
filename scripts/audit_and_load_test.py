@@ -1,5 +1,5 @@
 """
-Master Production Audit & Load Testing Harness for Annapoorni Academy V2.0
+Master Production Audit & Load Testing Harness for Cognova V2.0
 Executes A-Z verification, security injection testing, endpoint inventory,
 and multi-level concurrency/load testing (25, 50, 100, 150, 200 users).
 """
@@ -357,7 +357,7 @@ def run_concurrency_level(concurrency_level, total_users):
 
 def main():
     print("================================================================================")
-    print(" ANNAPOORNI ACADEMY V2.0 - MASTER AUDIT & CONCURRENCY / LOAD TEST HARNESS")
+    print(" Cognova V2.0 - MASTER AUDIT & CONCURRENCY / LOAD TEST HARNESS")
     print(f" Target Base URL: {BASE_URL}")
     print(f" Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("================================================================================")

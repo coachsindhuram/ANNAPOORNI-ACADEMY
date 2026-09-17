@@ -16,6 +16,7 @@ from models.announcement import Announcement
 from models.enrollment import Enrollment
 from models.inquiry import ContactInquiry
 from models.activity_log import ActivityLog
+from models.page import Page
 from services.email_service import (
     send_contact_inquiry_emails,
     send_enrollment_emails,
@@ -35,6 +36,21 @@ def get_website_settings():
 def get_website_theme():
     theme = ThemeSetting.query.first()
     return jsonify(theme.to_dict() if theme else {}), 200
+
+# CMS Pages
+@public_bp.route('/public/pages/home', methods=['GET'])
+def get_public_home_page():
+    page = Page.query.filter_by(is_home=True, status='published').first()
+    if not page:
+        return jsonify({'error': 'Home page not found'}), 404
+    return jsonify(page.to_dict()), 200
+
+@public_bp.route('/public/pages/<slug>', methods=['GET'])
+def get_public_page(slug):
+    page = Page.query.filter_by(slug=slug, status='published').first()
+    if not page:
+        return jsonify({'error': 'Page not found'}), 404
+    return jsonify(page.to_dict()), 200
 
 @public_bp.route('/homepage', methods=['GET'])
 @public_bp.route('/homepage/sections', methods=['GET'])
@@ -84,15 +100,35 @@ def get_courses():
     courses = query.order_by(Course.display_order.asc(), Course.created_at.desc()).all()
     return jsonify([c.to_dict() for c in courses]), 200
 
-@public_bp.route('/courses/<int:course_id>', methods=['GET'])
-def get_course_detail(course_id):
-    course = Course.query.filter_by(id=course_id, status='published').first()
+@public_bp.route('/courses/<string:course_identifier>', methods=['GET'])
+def get_course_detail(course_identifier):
+    course = None
+    if course_identifier.isdigit():
+        course = Course.query.filter_by(id=int(course_identifier), status='published').first()
+    
     if not course:
-        # Check by slug
-        course = Course.query.filter_by(slug=str(course_id), status='published').first()
+        course = Course.query.filter_by(slug=course_identifier, status='published').first()
+        
     if not course:
         return jsonify({'error': 'Course not found'}), 404
-    return jsonify(course.to_dict(include_details=True)), 200
+
+    data = course.to_dict(include_details=True)
+
+    # Fetch related courses in same category or subject
+    related_query = Course.query.filter(
+        Course.status == 'published',
+        Course.id != course.id
+    )
+    if course.subject_id:
+        related_query = related_query.filter(
+            (Course.subject_id == course.subject_id) | (Course.category == course.category)
+        )
+    else:
+        related_query = related_query.filter(Course.category == course.category)
+
+    related = related_query.limit(3).all()
+    data['related_courses'] = [c.to_dict() for c in related]
+    return jsonify(data), 200
 
 # Public Subjects
 @public_bp.route('/subjects', methods=['GET'])
@@ -100,11 +136,15 @@ def get_subjects():
     subjects = Subject.query.filter_by(status='published').order_by(Subject.display_order.asc()).all()
     return jsonify([s.to_dict() for s in subjects]), 200
 
-@public_bp.route('/subjects/<int:subject_id>', methods=['GET'])
-def get_subject_detail(subject_id):
-    subject = Subject.query.filter_by(id=subject_id, status='published').first()
+@public_bp.route('/subjects/<string:subject_identifier>', methods=['GET'])
+def get_subject_detail(subject_identifier):
+    subject = None
+    if subject_identifier.isdigit():
+        subject = Subject.query.filter_by(id=int(subject_identifier), status='published').first()
+
     if not subject:
-        subject = Subject.query.filter_by(slug=str(subject_id), status='published').first()
+        subject = Subject.query.filter_by(slug=subject_identifier, status='published').first()
+
     if not subject:
         return jsonify({'error': 'Subject not found'}), 404
 
@@ -222,10 +262,24 @@ def get_announcements():
     items = query.order_by(Announcement.created_at.desc()).all()
     return jsonify([i.to_dict() for i in items]), 200
 
-@public_bp.route('/courses/<int:course_id>/enroll', methods=['POST'])
-def enroll_course(course_id):
-    course = Course.query.get_or_404(course_id)
+@public_bp.route('/courses/<string:course_identifier>/enroll', methods=['POST'])
+def enroll_course(course_identifier):
+    course = None
+    if course_identifier.isdigit():
+        course = Course.query.filter_by(id=int(course_identifier)).first()
+    if not course:
+        course = Course.query.filter_by(slug=course_identifier).first()
+    if not course:
+        return jsonify({'error': 'Course not found'}), 404
+
     data = request.get_json() or {}
+
+    # Honeypot spam check: if website_url or hp is filled, bot submission
+    if data.get('website_url') or data.get('hp_field'):
+        return jsonify({
+            'message': f"Enrollment registration for '{course.title}' submitted successfully!",
+            'email_sent': True
+        }), 201
 
     student_name = data.get('student_name', '').strip()
     email = data.get('email', '').strip()
@@ -278,6 +332,13 @@ def enroll_course(course_id):
 def submit_contact_inquiry():
     data = request.get_json() or {}
 
+    # Honeypot spam check
+    if data.get('website_url') or data.get('hp_field'):
+        return jsonify({
+            'message': 'Your inquiry has been received. Our team will contact you shortly.',
+            'email_sent': True
+        }), 201
+
     name = data.get('name', '').strip()
     email = data.get('email', '').strip()
     phone = data.get('phone', '').strip()
@@ -323,4 +384,3 @@ def submit_contact_inquiry():
         'inquiry': inquiry.to_dict(),
         'email_sent': email_delivered
     }), 201
-

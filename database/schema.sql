@@ -1,4 +1,4 @@
--- Database Schema for Annapoorni Academy V1.0 (MySQL Compatible)
+-- Database Schema for Cognova V1.0 (MySQL Compatible)
 
 CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -11,12 +11,19 @@ CREATE TABLE IF NOT EXISTS admins (
 
 CREATE TABLE IF NOT EXISTS website_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    site_name VARCHAR(150) NOT NULL DEFAULT 'Annapoorni Academy',
+    site_name VARCHAR(150) NOT NULL DEFAULT 'Cognova',
     logo_url VARCHAR(500),
     favicon_url VARCHAR(500),
     site_description TEXT,
     tagline VARCHAR(255) DEFAULT 'Empowering Minds, Shaping Futures',
     dark_mode_default BOOLEAN DEFAULT FALSE,
+    location_name VARCHAR(150) DEFAULT 'Cognova',
+    address TEXT,
+    latitude VARCHAR(50) DEFAULT '11.0168445',
+    longitude VARCHAR(50) DEFAULT '76.9558321',
+    google_maps_url TEXT,
+    apple_maps_url TEXT,
+    maps_embed_url TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -92,7 +99,12 @@ CREATE TABLE IF NOT EXISTS contact_settings (
     email VARCHAR(120) DEFAULT 'coach.sindhuram@gmail.com',
     phone VARCHAR(50) DEFAULT '+91 90803 85589',
     whatsapp VARCHAR(50) DEFAULT '+919080385589',
+    location_name VARCHAR(150) DEFAULT 'Cognova',
     address TEXT,
+    latitude VARCHAR(50) DEFAULT '11.0168445',
+    longitude VARCHAR(50) DEFAULT '76.9558321',
+    google_maps_url TEXT,
+    apple_maps_url TEXT,
     maps_embed_url TEXT,
     working_hours VARCHAR(150),
     contact_form_recipient VARCHAR(120) DEFAULT 'coach.sindhuram@gmail.com',
@@ -274,3 +286,38 @@ CREATE TABLE IF NOT EXISTS activity_logs (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE SET NULL
 );
+C R E A T E   T A B L E   I F   N O T   E X I S T S   p a g e s   ( 
+         i d   I N T   A U T O _ I N C R E M E N T   P R I M A R Y   K E Y , 
+         n a m e   V A R C H A R ( 1 5 0 )   N O T   N U L L , 
+         s l u g   V A R C H A R ( 1 5 0 )   N O T   N U L L   U N I Q U E , 
+         s t a t u s   V A R C H A R ( 2 0 )   D E F A U L T   ' d r a f t ' , 
+         s e o _ t i t l e   V A R C H A R ( 2 5 5 ) , 
+         s e o _ d e s c r i p t i o n   T E X T , 
+         i s _ h o m e   B O O L E A N   D E F A U L T   F A L S E , 
+         c r e a t e d _ a t   D A T E T I M E   D E F A U L T   C U R R E N T _ T I M E S T A M P , 
+         u p d a t e d _ a t   D A T E T I M E   D E F A U L T   C U R R E N T _ T I M E S T A M P   O N   U P D A T E   C U R R E N T _ T I M E S T A M P 
+ ) ; 
+ 
+ C R E A T E   T A B L E   I F   N O T   E X I S T S   p a g e _ s e c t i o n s   ( 
+         i d   I N T   A U T O _ I N C R E M E N T   P R I M A R Y   K E Y , 
+         p a g e _ i d   I N T   N O T   N U L L , 
+         t y p e   V A R C H A R ( 5 0 )   N O T   N U L L , 
+         d i s p l a y _ o r d e r   I N T   D E F A U L T   0 , 
+         c o n t e n t _ j s o n   T E X T , 
+         s t y l e s _ j s o n   T E X T , 
+         r e s p o n s i v e _ j s o n   T E X T , 
+         a n i m a t i o n _ j s o n   T E X T , 
+         F O R E I G N   K E Y   ( p a g e _ i d )   R E F E R E N C E S   p a g e s ( i d )   O N   D E L E T E   C A S C A D E 
+ ) ; 
+ 
+ C R E A T E   T A B L E   I F   N O T   E X I S T S   p a g e _ v e r s i o n s   ( 
+         i d   I N T   A U T O _ I N C R E M E N T   P R I M A R Y   K E Y , 
+         p a g e _ i d   I N T   N O T   N U L L , 
+         v e r s i o n _ n a m e   V A R C H A R ( 1 0 0 ) , 
+         a d m i n _ i d   I N T , 
+         s n a p s h o t _ j s o n   L O N G T E X T   N O T   N U L L , 
+         c r e a t e d _ a t   D A T E T I M E   D E F A U L T   C U R R E N T _ T I M E S T A M P , 
+         F O R E I G N   K E Y   ( p a g e _ i d )   R E F E R E N C E S   p a g e s ( i d )   O N   D E L E T E   C A S C A D E , 
+         F O R E I G N   K E Y   ( a d m i n _ i d )   R E F E R E N C E S   a d m i n s ( i d )   O N   D E L E T E   S E T   N U L L 
+ ) ;  
+ 

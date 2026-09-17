@@ -1,4 +1,5 @@
 import re
+import json
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models.course import Course
@@ -9,6 +10,13 @@ admin_courses_bp = Blueprint('admin_courses', __name__, url_prefix='/api/admin/c
 def generate_slug(text):
     slug = re.sub(r'[^a-zA-Z0-9\s-]', '', text).strip().lower()
     return re.sub(r'[\s-]+', '-', slug)
+
+def _serialize_json_field(val):
+    if val is None:
+        return None
+    if isinstance(val, (list, dict)):
+        return json.dumps(val)
+    return str(val)
 
 @admin_courses_bp.route('', methods=['GET'])
 @admin_required()
@@ -29,15 +37,24 @@ def create_course():
     if existing:
         slug = f"{slug}-{Course.query.count() + 1}"
 
+    learning_outcomes = _serialize_json_field(data.get('learning_outcomes'))
+    skills_developed = _serialize_json_field(data.get('skills_developed'))
+    faqs_json = _serialize_json_field(data.get('faqs') or data.get('faqs_json'))
+
     course = Course(
         title=title,
         slug=slug,
         description=data.get('description'),
         thumbnail_url=data.get('thumbnail_url'),
         category=data.get('category', 'General'),
-        subject_id=data.get('subject_id'),
+        subject_id=data.get('subject_id') or None,
         difficulty=data.get('difficulty', 'Beginner'),
         duration=data.get('duration', '4 Weeks'),
+        age_group=data.get('age_group', 'Grade 4 - 12 & Adults'),
+        prerequisites=data.get('prerequisites', 'Basic arithmetic and keen interest in rapid learning'),
+        learning_outcomes=learning_outcomes,
+        skills_developed=skills_developed,
+        faqs_json=faqs_json,
         status=data.get('status', 'published'),
         is_featured=data.get('is_featured', False),
         display_order=data.get('display_order', 0)
@@ -54,9 +71,19 @@ def update_course(course_id):
         return jsonify({'error': 'Course not found'}), 404
 
     data = request.get_json() or {}
-    for f in ['title', 'description', 'thumbnail_url', 'category', 'subject_id', 'difficulty', 'duration', 'status', 'is_featured', 'display_order']:
+    for f in ['title', 'description', 'thumbnail_url', 'category', 'difficulty', 'duration', 'age_group', 'prerequisites', 'status', 'is_featured', 'display_order']:
         if f in data:
             setattr(course, f, data[f])
+
+    if 'subject_id' in data:
+        course.subject_id = data['subject_id'] or None
+
+    if 'learning_outcomes' in data:
+        course.learning_outcomes = _serialize_json_field(data['learning_outcomes'])
+    if 'skills_developed' in data:
+        course.skills_developed = _serialize_json_field(data['skills_developed'])
+    if 'faqs' in data or 'faqs_json' in data:
+        course.faqs_json = _serialize_json_field(data.get('faqs') or data.get('faqs_json'))
 
     if 'title' in data and not data.get('slug'):
         course.slug = generate_slug(data['title'])
@@ -74,3 +101,4 @@ def delete_course(course_id):
     db.session.delete(course)
     db.session.commit()
     return jsonify({'message': 'Course deleted successfully'}), 200
+

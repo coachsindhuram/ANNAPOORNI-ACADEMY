@@ -5,9 +5,9 @@ const SiteSettingsContext = createContext();
 
 export const SiteSettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState({
-    site_name: 'Annapoorni Academy',
+    site_name: 'Cognova',
     tagline: 'Empowering Minds, Shaping Futures',
-    site_description: 'Annapoorni Academy is a premier educational platform.',
+    site_description: 'Cognova is a premier educational platform.',
     logo_url: '',
     favicon_url: ''
   });
@@ -43,6 +43,16 @@ export const SiteSettingsProvider = ({ children }) => {
     fetchSiteDetails();
   }, []);
 
+  const academyLocation = {
+    name: settings.location_name || contactInfo.location_name || settings.site_name || 'Cognova',
+    address: settings.address || contactInfo.address || 'Coach Sindhu Ram Academy, Tamil Nadu, India',
+    latitude: settings.latitude || contactInfo.latitude || '11.0168445',
+    longitude: settings.longitude || contactInfo.longitude || '76.9558321',
+    google_maps_url: settings.google_maps_url || contactInfo.google_maps_url || '',
+    apple_maps_url: settings.apple_maps_url || contactInfo.apple_maps_url || '',
+    maps_embed_url: settings.maps_embed_url || contactInfo.maps_embed_url || 'https://maps.google.com/maps?q=Cognova%20Academy%20Coach%20Sindhu%20Ram&t=&z=15&ie=UTF8&iwloc=&output=embed'
+  };
+
   return (
     <SiteSettingsContext.Provider value={{
       settings,
@@ -50,6 +60,7 @@ export const SiteSettingsProvider = ({ children }) => {
       socialLinks,
       contactInfo,
       seoInfo,
+      academyLocation,
       fetchSiteDetails,
       loading
     }}>

@@ -16,6 +16,7 @@ from models.announcement import Announcement
 from models.activity_log import ActivityLog
 from models.enrollment import Enrollment
 from models.inquiry import ContactInquiry
+from models.page import Page, PageSection, PageVersion
 
 __all__ = [
     'db',
@@ -41,5 +42,8 @@ __all__ = [
     'Announcement',
     'ActivityLog',
     'Enrollment',
-    'ContactInquiry'
+    'ContactInquiry',
+    'Page',
+    'PageSection',
+    'PageVersion'
 ]

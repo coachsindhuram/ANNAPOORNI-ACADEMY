@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
 import { Toast } from '../../components/Toast';
-import { Save, PhoneCall, Mail, MapPin, Clock, MessageSquare, Search, Trash2, CheckCircle2 } from 'lucide-react';
+import { useSiteSettings } from '../../context/SiteSettingsContext';
+import { Save, PhoneCall, Mail, MapPin, Clock, MessageSquare, Search, Trash2, CheckCircle2, Compass, Navigation } from 'lucide-react';
 
 export const ContactManager = () => {
+  const { fetchSiteDetails } = useSiteSettings();
   const [activeTab, setActiveTab] = useState('inquiries');
   const [inquiries, setInquiries] = useState([]);
   const [inquiryLoading, setInquiryLoading] = useState(true);
@@ -11,7 +13,18 @@ export const ContactManager = () => {
   const [statusFilter, setStatusFilter] = useState('');
 
   const [formData, setFormData] = useState({
-    email: '', phone: '', address: '', maps_embed_url: '', working_hours: '', contact_form_recipient: ''
+    email: '',
+    phone: '',
+    whatsapp: '',
+    location_name: '',
+    address: '',
+    latitude: '',
+    longitude: '',
+    google_maps_url: '',
+    apple_maps_url: '',
+    maps_embed_url: '',
+    working_hours: '',
+    contact_form_recipient: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -28,25 +41,24 @@ export const ContactManager = () => {
     }
   };
 
+  useEffect(() => {
+    fetchContact();
+  }, []);
+
   const fetchInquiries = async () => {
     try {
       setInquiryLoading(true);
       const params = {};
       if (search) params.search = search;
       if (statusFilter) params.status = statusFilter;
-
       const res = await API.get('/api/admin/contact/inquiries', { params });
-      setInquiries(res.data);
+      setInquiries(res.data || []);
     } catch (err) {
-      console.error('Failed to fetch contact inquiries', err);
+      console.error(err);
     } finally {
       setInquiryLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchContact();
-  }, []);
 
   useEffect(() => {
     if (activeTab === 'inquiries') {
@@ -59,7 +71,10 @@ export const ContactManager = () => {
     setSaving(true);
     try {
       await API.put('/api/admin/contact', formData);
-      setToastMsg('Contact details updated successfully!');
+      if (fetchSiteDetails) {
+        await fetchSiteDetails();
+      }
+      setToastMsg('Contact details and location settings updated successfully!');
     } catch (err) {
       alert('Error updating contact information');
     } finally {
@@ -291,6 +306,52 @@ export const ContactManager = () => {
               />
             </div>
 
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">Latitude Coordinates</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g. 11.0168445"
+                  value={formData.latitude || ''}
+                  onChange={e => setFormData({ ...formData, latitude: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Longitude Coordinates</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g. 76.9558321"
+                  value={formData.longitude || ''}
+                  onChange={e => setFormData({ ...formData, longitude: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Custom Google Maps Destination URL (Android / Desktop)</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="https://www.google.com/maps/search/?api=1&query=..."
+                value={formData.google_maps_url || ''}
+                onChange={e => setFormData({ ...formData, google_maps_url: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Custom Apple Maps Destination URL (iPhone / iPad)</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="https://maps.apple.com/?q=..."
+                value={formData.apple_maps_url || ''}
+                onChange={e => setFormData({ ...formData, apple_maps_url: e.target.value })}
+              />
+            </div>
+
             <div className="form-group">
               <label className="form-label">Working Hours</label>
               <input
@@ -323,7 +384,7 @@ export const ContactManager = () => {
             </div>
 
             <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: '1rem' }} disabled={saving}>
-              <Save size={18} /> {saving ? 'Saving...' : 'Save Contact Settings'}
+              <Save size={18} /> {saving ? 'Saving...' : 'Save Contact & Location Settings'}
             </button>
           </form>
         </div>

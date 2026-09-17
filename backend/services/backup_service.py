@@ -1,5 +1,5 @@
 """
-Backup & Export Service for Annapoorni Academy V2.0
+Backup & Export Service for Cognova V2.0
 Generates a consolidated JSON export of all core database collections.
 """
 
@@ -32,7 +32,7 @@ def generate_academy_backup_data():
     backup = {
         'version': '2.0.0',
         'export_timestamp': datetime.utcnow().isoformat() + 'Z',
-        'academy': 'Annapoorni Academy',
+        'academy': 'Cognova',
         'settings': {
             'website': site.to_dict() if site else {},
             'theme': theme.to_dict() if theme else {},

@@ -6,8 +6,6 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { AdminLayout } from '../layouts/AdminLayout';
 
 // Public Pages
-import { Home } from '../pages/public/Home';
-import { About } from '../pages/public/About';
 import { Courses } from '../pages/public/Courses';
 import { CourseDetail } from '../pages/public/CourseDetail';
 import { Subjects } from '../pages/public/Subjects';
@@ -15,13 +13,14 @@ import { SubjectDetail } from '../pages/public/SubjectDetail';
 import { LessonDetail } from '../pages/public/LessonDetail';
 import { QuizView } from '../pages/public/QuizView';
 import { Announcements } from '../pages/public/Announcements';
-import { Contact } from '../pages/public/Contact';
+import DynamicPage from '../pages/DynamicPage';
 
 // Admin Pages
 import { AdminLogin } from '../pages/admin/AdminLogin';
 import { AdminDashboard } from '../pages/admin/AdminDashboard';
 import { AppearanceEditor } from '../pages/admin/AppearanceEditor';
-import { HomepageEditor } from '../pages/admin/HomepageEditor';
+import { PagesManager } from '../pages/admin/PagesManager';
+import { VisualBuilder } from '../pages/admin/VisualBuilder';
 import { NavigationManager } from '../pages/admin/NavigationManager';
 import { CoursesManager } from '../pages/admin/CoursesManager';
 import { SubjectsManager } from '../pages/admin/SubjectsManager';
@@ -40,8 +39,7 @@ export const AppRoutes = () => {
     <Routes>
       {/* Public Website Routes */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<DynamicPage isHome={true} />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/subjects" element={<Subjects />} />
@@ -49,7 +47,8 @@ export const AppRoutes = () => {
         <Route path="/lessons/:id" element={<LessonDetail />} />
         <Route path="/quizzes/:id" element={<QuizView />} />
         <Route path="/announcements" element={<Announcements />} />
-        <Route path="/contact" element={<Contact />} />
+        {/* Dynamic page catch-all MUST be at the end of Public routes */}
+        <Route path="/:slug" element={<DynamicPage />} />
       </Route>
 
       {/* Admin Login Route */}
@@ -58,9 +57,10 @@ export const AppRoutes = () => {
       {/* Protected Admin Routes */}
       <Route element={<AdminLayout />}>
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/pages" element={<PagesManager />} />
+        <Route path="/admin/pages/builder/:id" element={<VisualBuilder />} />
         <Route path="/admin/enrollments" element={<EnrollmentsManager />} />
         <Route path="/admin/appearance" element={<AppearanceEditor />} />
-        <Route path="/admin/homepage" element={<HomepageEditor />} />
         <Route path="/admin/navigation" element={<NavigationManager />} />
         <Route path="/admin/courses" element={<CoursesManager />} />
         <Route path="/admin/subjects" element={<SubjectsManager />} />

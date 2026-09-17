@@ -37,6 +37,34 @@ def me():
         return jsonify({'error': 'Admin not found'}), 404
     return jsonify(admin.to_dict()), 200
 
+@auth_bp.route('/change-password', methods=['POST'])
+@admin_required()
+def change_password():
+    identity = get_jwt_identity()
+    admin = Admin.query.get(int(identity))
+    if not admin:
+        return jsonify({'error': 'Admin not found'}), 404
+
+    data = request.get_json(force=True, silent=True) or request.form or {}
+    current_password = data.get('current_password', '').strip()
+    new_password = data.get('new_password', '').strip()
+
+    if not current_password or not new_password:
+        return jsonify({'error': 'Current password and new password are required'}), 400
+
+    if len(new_password) < 8:
+        return jsonify({'error': 'New password must be at least 8 characters long'}), 400
+
+    if not admin.check_password(current_password):
+        return jsonify({'error': 'Incorrect current password'}), 400
+
+    from extensions import db
+    admin.set_password(new_password)
+    db.session.commit()
+
+    return jsonify({'message': 'Password updated successfully'}), 200
+
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
     return jsonify({'message': 'Logged out successfully'}), 200
+

@@ -26,7 +26,7 @@ export const AdminLayout = ({ pageTitle }) => {
     const path = location.pathname;
     if (path === '/admin') return 'Dashboard';
     if (path.includes('/appearance')) return 'Website Appearance';
-    if (path.includes('/homepage')) return 'Homepage Section Editor';
+    if (path.includes('/pages')) return 'Pages & Visual Builder';
     if (path.includes('/navigation')) return 'Navigation Management';
     if (path.includes('/courses')) return 'Course Management';
     if (path.includes('/subjects')) return 'Subject Management';

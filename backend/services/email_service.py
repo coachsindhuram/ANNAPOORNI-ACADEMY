@@ -13,7 +13,7 @@ def _get_email_config():
     Defaults to Google Gmail (smtp.gmail.com:587 STARTTLS) with official academy identity.
     """
     official_email = os.environ.get('MAIL_FROM') or os.environ.get('MAIL_USERNAME') or 'coach.sindhuram@gmail.com'
-    from_name = os.environ.get('MAIL_FROM_NAME', 'Annapoorni Academy')
+    from_name = os.environ.get('MAIL_FROM_NAME', 'Cognova')
     admin_recipient = os.environ.get('ADMIN_EMAIL') or official_email
     
     mail_server = os.environ.get('MAIL_SERVER', 'smtp.gmail.com').strip()
@@ -68,7 +68,7 @@ def send_email(to_email, subject, body_html, reply_to=None, from_name=None, plai
         msg['Reply-To'] = reply_to
 
     # Plain text fallback
-    text_content = plain_text or "Please enable HTML in your email client to view this message from Annapoorni Academy."
+    text_content = plain_text or "Please enable HTML in your email client to view this message from Cognova."
     msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
     msg.attach(MIMEText(body_html, 'html', 'utf-8'))
 
@@ -124,7 +124,7 @@ def send_contact_inquiry_emails(inquiry_data):
     admin_subject = f"New Contact Inquiry from {applicant_name}: {subject}"
     admin_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-      <h2 style="color: #1e3a8a; margin-top: 0; border-bottom: 2px solid #1e3a8a; padding-bottom: 8px;">📬 New Website Contact Inquiry</h2>
+      <h2 style="color: #552B7A; margin-top: 0; border-bottom: 2px solid #552B7A; padding-bottom: 8px;">📬 New Website Contact Inquiry</h2>
       <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
         <tr><td style="padding: 6px 0; color: #64748b; width: 140px;"><strong>Inquiry ID:</strong></td><td>#{inquiry_id}</td></tr>
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Applicant Name:</strong></td><td>{applicant_name}</td></tr>
@@ -134,8 +134,8 @@ def send_contact_inquiry_emails(inquiry_data):
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Subject:</strong></td><td>{subject}</td></tr>
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Received On:</strong></td><td>{sub_date}</td></tr>
       </table>
-      <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; border-left: 4px solid #1e3a8a; margin: 15px 0;">
-        <strong style="color: #0f172a;">Message:</strong>
+      <div style="background-color: #FFF9EF; padding: 15px; border-radius: 6px; border-left: 4px solid #552B7A; margin: 15px 0;">
+        <strong style="color: #24202A;">Message:</strong>
         <p style="margin: 8px 0 0 0; color: #334155; white-space: pre-line;">{message}</p>
       </div>
       <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 20px;">
@@ -148,21 +148,21 @@ def send_contact_inquiry_emails(inquiry_data):
         subject=admin_subject,
         body_html=admin_html,
         reply_to=applicant_email,
-        from_name="Annapoorni Academy Inquiries"
+        from_name="Cognova Inquiries"
     )
     results['admin_notified'] = admin_ok
 
     # 2. Applicant Confirmation Email
     if applicant_email:
-        student_subject = "We received your enquiry – Annapoorni Academy"
+        student_subject = "We received your enquiry – Cognova"
         student_html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; color: #1e293b;">
-          <h2 style="color: #1e3a8a; margin-top: 0;">We received your enquiry – Annapoorni Academy</h2>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; color: #24202A;">
+          <h2 style="color: #552B7A; margin-top: 0;">We received your enquiry – Cognova</h2>
           <p>Dear <strong>{applicant_name}</strong>,</p>
-          <p>Thank you for contacting Annapoorni Academy. We have received your enquiry successfully. Our team will review your request and get back to you shortly.</p>
+          <p>Thank you for contacting Cognova. We have received your enquiry successfully. Our team will review your request and get back to you shortly.</p>
           
-          <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
-            <h4 style="margin-top: 0; color: #0f172a; margin-bottom: 10px;">Summary of Your Enquiry:</h4>
+          <div style="background-color: #FFF9EF; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+            <h4 style="margin-top: 0; color: #24202A; margin-bottom: 10px;">Summary of Your Enquiry:</h4>
             <p style="margin: 4px 0;"><strong>Subject:</strong> {subject}</p>
             <p style="margin: 4px 0;"><strong>Preferred Learning Mode:</strong> {learning_mode}</p>
             <p style="margin: 4px 0;"><strong>Message:</strong> {message}</p>
@@ -179,9 +179,9 @@ def send_contact_inquiry_emails(inquiry_data):
 
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
           <p style="margin-bottom: 4px;">Regards,</p>
-          <p style="margin: 0; font-weight: bold; color: #1e3a8a;">Annapoorni Academy</p>
+          <p style="margin: 0; font-weight: bold; color: #552B7A;">Cognova</p>
           <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.9rem;">
-            <a href="mailto:{config['official_email']}" style="color: #1e3a8a;">{config['official_email']}</a> | <a href="https://annapoorniacademy.com" style="color: #1e3a8a;">annapoorniacademy.com</a>
+            <a href="mailto:{config['official_email']}" style="color: #552B7A;">{config['official_email']}</a> | <a href="https://cognova.in" style="color: #552B7A;">cognova.in</a>
           </p>
         </div>
         """
@@ -189,7 +189,7 @@ def send_contact_inquiry_emails(inquiry_data):
             to_email=applicant_email,
             subject=student_subject,
             body_html=student_html,
-            from_name="Annapoorni Academy"
+            from_name="Cognova"
         )
         results['applicant_confirmed'] = student_ok
 
@@ -220,7 +220,7 @@ def send_enrollment_emails(enrollment_data):
     admin_subject = f"New Enrollment Application: {student_name} - {course_title}"
     admin_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-      <h2 style="color: #1e3a8a; margin-top: 0; border-bottom: 2px solid #1e3a8a; padding-bottom: 8px;">🎓 New Course Enrollment Application</h2>
+      <h2 style="color: #552B7A; margin-top: 0; border-bottom: 2px solid #552B7A; padding-bottom: 8px;">🎓 New Course Enrollment Application</h2>
       <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
         <tr><td style="padding: 6px 0; color: #64748b; width: 150px;"><strong>Enrollment ID:</strong></td><td>#{enrollment_id}</td></tr>
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Course:</strong></td><td><strong>{course_title}</strong></td></tr>
@@ -230,8 +230,8 @@ def send_enrollment_emails(enrollment_data):
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Learning Mode:</strong></td><td>{preferred_mode}</td></tr>
         <tr><td style="padding: 6px 0; color: #64748b;"><strong>Submission Date:</strong></td><td>{sub_date}</td></tr>
       </table>
-      <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; border-left: 4px solid #1e3a8a; margin: 15px 0;">
-        <strong style="color: #0f172a;">Applicant Notes / Details:</strong>
+      <div style="background-color: #FFF9EF; padding: 15px; border-radius: 6px; border-left: 4px solid #552B7A; margin: 15px 0;">
+        <strong style="color: #24202A;">Applicant Notes / Details:</strong>
         <p style="margin: 8px 0 0 0; color: #334155; white-space: pre-line;">{message or 'None'}</p>
       </div>
       <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 20px;">
@@ -244,23 +244,23 @@ def send_enrollment_emails(enrollment_data):
         subject=admin_subject,
         body_html=admin_html,
         reply_to=email,
-        from_name="Annapoorni Academy Enrollments"
+        from_name="Cognova Enrollments"
     )
     results['admin_notified'] = admin_ok
 
     # 2. Applicant Confirmation Email
     if email:
-        student_subject = "Application Received – Annapoorni Academy"
+        student_subject = "Application Received – Cognova"
         student_html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; color: #1e293b;">
-          <h2 style="color: #1e3a8a; margin-top: 0;">Application Received – Annapoorni Academy</h2>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px; color: #24202A;">
+          <h2 style="color: #552B7A; margin-top: 0;">Application Received – Cognova</h2>
           <p>Dear <strong>{student_name}</strong>,</p>
-          <p>Thank you for submitting your course enrollment application for <strong>{course_title}</strong> with Coach Sindhu Ram at Annapoorni Academy.</p>
+          <p>Thank you for submitting your course enrollment application for <strong>{course_title}</strong> with Coach Sindhu Ram at Cognova.</p>
           
           <p>We have successfully received your application. Our team will review the details and contact you shortly with the upcoming batch schedules, syllabus, and onboarding instructions.</p>
 
-          <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
-            <h4 style="margin-top: 0; color: #0f172a; margin-bottom: 10px;">Your Application Details:</h4>
+          <div style="background-color: #FFF9EF; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+            <h4 style="margin-top: 0; color: #24202A; margin-bottom: 10px;">Your Application Details:</h4>
             <p style="margin: 4px 0;"><strong>Course:</strong> {course_title}</p>
             <p style="margin: 4px 0;"><strong>Selected Mode:</strong> {preferred_mode}</p>
             <p style="margin: 4px 0;"><strong>Contact Phone:</strong> {phone}</p>
@@ -277,9 +277,9 @@ def send_enrollment_emails(enrollment_data):
 
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
           <p style="margin-bottom: 4px;">Regards,</p>
-          <p style="margin: 0; font-weight: bold; color: #1e3a8a;">Annapoorni Academy</p>
+          <p style="margin: 0; font-weight: bold; color: #1e3a8a;">Cognova</p>
           <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.9rem;">
-            <a href="mailto:{config['official_email']}" style="color: #1e3a8a;">{config['official_email']}</a> | <a href="https://annapoorniacademy.com" style="color: #1e3a8a;">annapoorniacademy.com</a>
+            <a href="mailto:{config['official_email']}" style="color: #1e3a8a;">{config['official_email']}</a> | <a href="https://cognova.com" style="color: #1e3a8a;">cognova.com</a>
           </p>
         </div>
         """
@@ -287,7 +287,7 @@ def send_enrollment_emails(enrollment_data):
             to_email=email,
             subject=student_subject,
             body_html=student_html,
-            from_name="Annapoorni Academy"
+            from_name="Cognova"
         )
         results['applicant_confirmed'] = student_ok
 
@@ -297,7 +297,7 @@ def send_enrollment_emails(enrollment_data):
 def send_admin_email_notification(subject, body_html, recipient=None):
     config = _get_email_config()
     target = recipient or config['admin_recipient']
-    return send_email(to_email=target, subject=subject, body_html=body_html, from_name="Annapoorni Academy Notifications")
+    return send_email(to_email=target, subject=subject, body_html=body_html, from_name="Cognova Notifications")
 
 def send_student_confirmation_email(recipient_email, student_name, subject, body_html):
-    return send_email(to_email=recipient_email, subject=subject, body_html=body_html, from_name="Annapoorni Academy")
+    return send_email(to_email=recipient_email, subject=subject, body_html=body_html, from_name="Cognova")
