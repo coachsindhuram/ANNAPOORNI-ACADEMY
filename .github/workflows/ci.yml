@@ -64,4 +64,4 @@ jobs:
 
       - name: Build Production Docker Image
         run: |
-          docker build -t Cognova-academy:ci .
+          docker build -t cognova-academy:ci .
