@@ -20,8 +20,8 @@ export const Courses = () => {
           API.get('/api/courses'),
           API.get('/api/subjects')
         ]);
-        setCourses(cRes.data || []);
-        setSubjects(sRes.data || []);
+        setCourses(Array.isArray(cRes.data) ? cRes.data : []);
+        setSubjects(Array.isArray(sRes.data) ? sRes.data : []);
       } catch (err) {
         console.error('Error fetching courses:', err);
       } finally {

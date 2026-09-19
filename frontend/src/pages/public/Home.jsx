@@ -32,9 +32,9 @@ export const Home = () => {
           API.get('/api/courses?featured=true').catch(() => ({ data: [] })),
           API.get('/api/announcements?featured=true').catch(() => ({ data: [] }))
         ]);
-        setSections(secRes.data || []);
-        setFeaturedCourses(courseRes.data || []);
-        setAnnouncements(annRes.data || []);
+        setSections(Array.isArray(secRes.data) ? secRes.data : []);
+        setFeaturedCourses(Array.isArray(courseRes.data) ? courseRes.data : []);
+        setAnnouncements(Array.isArray(annRes.data) ? annRes.data : []);
       } catch (err) {
         console.error('Error fetching homepage data:', err);
       } finally {

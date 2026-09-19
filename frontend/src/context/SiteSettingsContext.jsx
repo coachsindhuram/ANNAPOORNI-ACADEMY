@@ -27,11 +27,11 @@ export const SiteSettingsProvider = ({ children }) => {
         API.get('/api/seo')
       ]);
 
-      if (resSet.data) setSettings(resSet.data);
-      if (resNav.data) setNavigation(resNav.data);
-      if (resSoc.data) setSocialLinks(resSoc.data);
-      if (resCon.data) setContactInfo(resCon.data);
-      if (resSeo.data) setSeoInfo(resSeo.data);
+      if (resSet.data && typeof resSet.data === 'object') setSettings(resSet.data);
+      if (resNav.data && Array.isArray(resNav.data)) setNavigation(resNav.data);
+      if (resSoc.data && Array.isArray(resSoc.data)) setSocialLinks(resSoc.data);
+      if (resCon.data && typeof resCon.data === 'object') setContactInfo(resCon.data);
+      if (resSeo.data && typeof resSeo.data === 'object') setSeoInfo(resSeo.data);
     } catch (err) {
       console.error('Error loading site settings:', err);
     } finally {
