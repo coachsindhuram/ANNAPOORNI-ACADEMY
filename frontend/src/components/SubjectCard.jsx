@@ -7,18 +7,18 @@ export const SubjectCard = ({ subject }) => {
 
   const renderIcon = (iconName) => {
     switch(iconName) {
-      case 'Calculator': return <Calculator size={28} />;
-      case 'Atom': return <Atom size={28} />;
-      case 'Code': return <Code size={28} />;
-      case 'Award': return <Award size={28} />;
-      case 'Cpu': return <Cpu size={28} />;
-      case 'Globe': return <Globe size={28} />;
-      default: return <BookOpen size={28} />;
+      case 'Calculator': return <Calculator className="premium-icon-3d" size={28} />;
+      case 'Atom': return <Atom className="premium-icon-3d" size={28} />;
+      case 'Code': return <Code className="premium-icon-3d" size={28} />;
+      case 'Award': return <Award className="premium-icon-3d" size={28} />;
+      case 'Cpu': return <Cpu className="premium-icon-3d" size={28} />;
+      case 'Globe': return <Globe className="premium-icon-3d" size={28} />;
+      default: return <BookOpen className="premium-icon-3d" size={28} />;
     }
   };
 
   return (
-    <div className="glass-card" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="card card-glow" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{
           width: '56px',

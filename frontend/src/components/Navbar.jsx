@@ -100,9 +100,9 @@ export const Navbar = () => {
           <span>{settings.site_name || 'Cognova'}</span>
         </Link>
 
-        {/* Desktop Navigation - Hidden on Mobile via main.css .nav-links media query */}
-        <nav aria-label="Desktop Main Navigation">
-          <ul className="nav-links">
+        {/* Desktop Navigation */}
+        <nav aria-label="Desktop Main Navigation" className="desktop-nav-wrapper">
+          <ul className="nav-links desktop-nav">
             {headerNav.map((item) => {
               const isActive = location.pathname === item.destination;
               return (
@@ -122,8 +122,8 @@ export const Navbar = () => {
           </ul>
         </nav>
 
-        {/* Desktop Header Social Icons & Actions - Hidden on Mobile via main.css .header-social-group media query */}
-        <div className="header-social-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Desktop Header Social Icons & Actions */}
+        <div className="header-social-group">
           {headerSocials.length > 0 && (
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               {headerSocials.map((soc) => (
@@ -147,7 +147,7 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle Button - Visible only on Mobile via main.css .mobile-menu-btn media query */}
+        {/* Mobile Menu Toggle Button */}
         <button
           className="mobile-menu-btn"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -164,12 +164,7 @@ export const Navbar = () => {
       <div 
         id="mobile-menu-dropdown"
         ref={menuRef}
-        className={`nav-links ${mobileOpen ? 'mobile-open' : ''}`}
-        style={{ 
-          display: mobileOpen ? 'flex' : 'none',
-          listStyle: 'none', // override browser defaults
-          zIndex: 1000
-        }}
+        className={`mobile-nav-dropdown ${mobileOpen ? 'mobile-open' : ''}`}
       >
         {headerNav.map((item) => {
           const isActive = location.pathname === item.destination;
@@ -229,3 +224,4 @@ export const Navbar = () => {
     </header>
   );
 };
+

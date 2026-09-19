@@ -128,10 +128,18 @@ export const Home = () => {
       {/* =====================================================================
           1. CINEMATIC PREMIUM HERO SECTION
           ===================================================================== */}
-      <section className="hero-section" aria-label="Introduction">
+      <section className="hero-section" aria-label="Introduction" style={{ background: 'radial-gradient(circle at 50% 35%, rgba(242,184,75,0.16), transparent 40%), radial-gradient(120% 120% at 50% 0%, #0F1E36 0%, #080D1A 100%)' }}>
         {/* Ambient Glow Orbs */}
         <div className="hero-glow-orb hero-glow-1" style={{ top: '-10%', left: '15%', width: '450px', height: '450px' }} />
         <div className="hero-glow-orb hero-glow-2" style={{ bottom: '-10%', right: '10%', width: '500px', height: '500px' }} />
+
+        {/* Gold Light Particles */}
+        <div className="gold-particle" style={{ top: '20%', left: '25%', animationDelay: '0s' }} />
+        <div className="gold-particle" style={{ top: '35%', left: '10%', animationDelay: '1.5s' }} />
+        <div className="gold-particle" style={{ top: '15%', right: '30%', animationDelay: '2.5s' }} />
+        <div className="gold-particle" style={{ bottom: '25%', left: '40%', animationDelay: '3.5s' }} />
+        <div className="gold-particle" style={{ top: '40%', right: '15%', animationDelay: '4.5s' }} />
+        <div className="gold-particle" style={{ bottom: '20%', right: '25%', animationDelay: '5.5s' }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 3 }}>
           <div className="responsive-grid-1-1" style={{ alignItems: 'center', gap: 'var(--space-12)' }}>
@@ -140,7 +148,7 @@ export const Home = () => {
             <div style={{ opacity: 1 }}>
               {/* Eyebrow */}
               <div className="hero-stagger-1">
-                <div className="badge-glow">
+                <div className="badge-glow badge-glow-premium">
                   <Sparkles size={15} style={{ color: 'var(--color-accent-light)' }} />
                   <span>Premier Cognitive & Mental Math Academy</span>
                 </div>
@@ -148,7 +156,7 @@ export const Home = () => {
 
               {/* H1 Heading */}
               <div className="hero-stagger-2">
-                <h1 style={{
+                <h1 className="glow-text-subtle" style={{
                   fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
                   lineHeight: 1.12,
                   fontWeight: 800,
@@ -276,7 +284,7 @@ export const Home = () => {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Zap size={18} />
+                  <Zap className="premium-icon-3d" size={18} />
                 </div>
                 <div>
                   <div style={{ fontSize: 'var(--text-xs)', color: 'rgba(255,255,255,0.7)' }}>Admissions Open</div>
@@ -306,7 +314,7 @@ export const Home = () => {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Brain size={20} />
+                  <Brain className="premium-icon-3d" size={20} />
                 </div>
                 <div>
                   <div style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: '#FFFFFF' }}>16 Ancient Sutras</div>
@@ -494,7 +502,7 @@ export const Home = () => {
                 justifyContent: 'center',
                 marginBottom: 'var(--space-5)'
               }}>
-                <Sparkles size={26} />
+                <Sparkles className="premium-icon-3d" size={26} />
               </div>
               <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
                 16 Vedic Sutras System
@@ -516,7 +524,7 @@ export const Home = () => {
                 justifyContent: 'center',
                 marginBottom: 'var(--space-5)'
               }}>
-                <Brain size={26} />
+                <Brain className="premium-icon-3d" size={26} />
               </div>
               <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
                 Mnemonic Retention
@@ -538,7 +546,7 @@ export const Home = () => {
                 justifyContent: 'center',
                 marginBottom: 'var(--space-5)'
               }}>
-                <BookOpen size={26} />
+                <BookOpen className="premium-icon-3d" size={26} />
               </div>
               <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
                 Speed Reading & Span
@@ -560,7 +568,7 @@ export const Home = () => {
                 justifyContent: 'center',
                 marginBottom: 'var(--space-5)'
               }}>
-                <Target size={26} />
+                <Target className="premium-icon-3d" size={26} />
               </div>
               <h3 style={{ color: '#FFFFFF', fontSize: 'var(--text-lg)', marginBottom: 'var(--space-2)' }}>
                 Olympiad & Exam Mastery

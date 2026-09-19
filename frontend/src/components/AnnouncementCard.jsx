@@ -18,7 +18,7 @@ export const AnnouncementCard = ({ announcement }) => {
   };
 
   return (
-    <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+    <div className="card card-glow" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.8rem' }}>
         <span style={{
           background: 'rgba(13, 148, 136, 0.1)',
